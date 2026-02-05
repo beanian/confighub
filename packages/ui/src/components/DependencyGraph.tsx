@@ -167,10 +167,10 @@ export function DependencyGraph({ dependencies }: DependencyGraphProps) {
     const simulation = d3.forceSimulation<GraphNode>(nodes)
       .force('link', d3.forceLink<GraphNode, GraphEdge>(edges)
         .id((d) => d.id)
-        .distance(150))
-      .force('charge', d3.forceManyBody().strength(-150))
+        .distance(180))
+      .force('charge', d3.forceManyBody().strength(-400))
       .force('center', d3.forceCenter(width / 2, height / 2))
-      .force('collision', d3.forceCollide().radius(50));
+      .force('collision', d3.forceCollide().radius(75));
 
     // Draw edges
     const link = g.append('g')
