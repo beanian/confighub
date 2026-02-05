@@ -192,7 +192,7 @@ export function DependencyGraph({ dependencies }: DependencyGraphProps) {
         d.fx = event.x;
         d.fy = event.y;
       })
-      .on('end', (event, d) => {
+      .on('end', (event, _d) => {
         if (!event.active) simulation.alphaTarget(0);
         // Keep fx/fy set so node stays where dropped
       });
