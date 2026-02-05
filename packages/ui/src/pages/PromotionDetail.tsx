@@ -33,6 +33,11 @@ export function PromotionDetail() {
   const [rollbackReason, setRollbackReason] = useState('');
   const [showRollbackModal, setShowRollbackModal] = useState(false);
 
+  // Impact tracking for prod promotions
+  const [hasActiveConsumers, setHasActiveConsumers] = useState(false);
+  const [impactAcknowledged, setImpactAcknowledged] = useState(false);
+  const [showImpactWarningModal, setShowImpactWarningModal] = useState(false);
+
   useEffect(() => {
     loadPromotion();
   }, [id]);
@@ -86,6 +91,19 @@ export function PromotionDetail() {
     } finally {
       setActionLoading(false);
     }
+  }
+
+  function handleImpactLoaded(hasActive: boolean) {
+    setHasActiveConsumers(hasActive);
+  }
+
+  function handleExecuteClick() {
+    // If promoting to prod with active consumers, require acknowledgment
+    if (promotion?.target_env === 'prod' && hasActiveConsumers && !impactAcknowledged) {
+      setShowImpactWarningModal(true);
+      return;
+    }
+    handleExecute();
   }
 
   async function handleExecute() {
@@ -200,7 +218,7 @@ export function PromotionDetail() {
               )}
               {canExecute && (
                 <button
-                  onClick={handleExecute}
+                  onClick={handleExecuteClick}
                   disabled={actionLoading}
                   className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-all text-sm font-medium disabled:opacity-50"
                 >
@@ -292,6 +310,7 @@ export function PromotionDetail() {
               environment={promotion.target_env}
               domain={promotion.domain}
               configKey={currentFile.file}
+              onImpactLoaded={handleImpactLoaded}
             />
           )}
 
@@ -311,6 +330,51 @@ export function PromotionDetail() {
             )}
           </div>
         </div>
+
+        {/* Production Impact Warning modal */}
+        {showImpactWarningModal && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg shadow-xl w-full max-w-lg p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <span className="text-3xl text-red-600">⚠</span>
+                <h2 className="text-lg font-semibold text-red-800">
+                  Production Consumers Detected
+                </h2>
+              </div>
+              <div className="bg-red-50 border border-red-200 rounded-md p-4 mb-4">
+                <p className="text-sm text-red-800">
+                  This promotion will affect <strong>active production applications</strong> that
+                  are currently consuming this configuration. Ensure you have:
+                </p>
+                <ul className="mt-2 text-sm text-red-700 list-disc list-inside space-y-1">
+                  <li>Reviewed all changes in the diff view</li>
+                  <li>Notified the affected teams (see consumer list)</li>
+                  <li>Confirmed the changes are safe for production</li>
+                </ul>
+              </div>
+
+              <div className="flex justify-end gap-2">
+                <button
+                  onClick={() => setShowImpactWarningModal(false)}
+                  className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-all text-sm"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => {
+                    setImpactAcknowledged(true);
+                    setShowImpactWarningModal(false);
+                    handleExecute();
+                  }}
+                  disabled={actionLoading}
+                  className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-all text-sm font-medium disabled:opacity-50"
+                >
+                  I Understand, Execute Promotion
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Rollback modal */}
         {showRollbackModal && (

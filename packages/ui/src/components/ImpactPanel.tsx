@@ -6,6 +6,7 @@ interface ImpactPanelProps {
   environment: string;
   domain: string;
   configKey: string;
+  onImpactLoaded?: (hasActiveConsumers: boolean, consumerCount: number) => void;
 }
 
 const statusColors: Record<ConsumerStatus, { bg: string; text: string; dot: string }> = {
@@ -28,18 +29,24 @@ function formatRelativeTime(dateStr: string): string {
   return date.toLocaleDateString();
 }
 
-export function ImpactPanel({ environment, domain, configKey }: ImpactPanelProps) {
+export function ImpactPanel({ environment, domain, configKey, onImpactLoaded }: ImpactPanelProps) {
   const [impact, setImpact] = useState<ImpactAnalysis | null>(null);
   const [loading, setLoading] = useState(true);
   const [expanded, setExpanded] = useState(false);
 
+  const isProd = environment === 'prod';
+
   useEffect(() => {
     api
       .getImpactAnalysis(environment, domain, configKey)
-      .then(setImpact)
+      .then((data) => {
+        setImpact(data);
+        const hasActive = data?.status_counts?.active > 0;
+        onImpactLoaded?.(hasActive, data?.consumer_count || 0);
+      })
       .catch(console.error)
       .finally(() => setLoading(false));
-  }, [environment, domain, configKey]);
+  }, [environment, domain, configKey, onImpactLoaded]);
 
   if (loading) {
     return (
@@ -61,12 +68,17 @@ export function ImpactPanel({ environment, domain, configKey }: ImpactPanelProps
   }
 
   const hasActiveConsumers = impact.status_counts.active > 0;
+  const isHighRisk = isProd && hasActiveConsumers;
 
   return (
     <div
       className={clsx(
         'border-b',
-        hasActiveConsumers ? 'bg-amber-50 border-amber-200' : 'bg-gray-50 border-gray-200'
+        isHighRisk
+          ? 'bg-red-50 border-red-300'
+          : hasActiveConsumers
+          ? 'bg-amber-50 border-amber-200'
+          : 'bg-gray-50 border-gray-200'
       )}
     >
       {/* Header / Warning Banner */}
@@ -76,10 +88,11 @@ export function ImpactPanel({ environment, domain, configKey }: ImpactPanelProps
       >
         <div className="flex items-center gap-3">
           {hasActiveConsumers && (
-            <span className="text-amber-600 text-lg">!</span>
+            <span className={clsx('text-lg font-bold', isHighRisk ? 'text-red-600' : 'text-amber-600')}>⚠</span>
           )}
           <div>
-            <div className={clsx('text-sm font-medium', hasActiveConsumers ? 'text-amber-800' : 'text-gray-700')}>
+            <div className={clsx('text-sm font-medium', isHighRisk ? 'text-red-800' : hasActiveConsumers ? 'text-amber-800' : 'text-gray-700')}>
+              {isHighRisk && <span className="font-bold">PRODUCTION IMPACT: </span>}
               {impact.consumer_count} app{impact.consumer_count !== 1 ? 's' : ''} consume this config
             </div>
             <div className="flex items-center gap-3 text-xs mt-0.5">
@@ -152,8 +165,10 @@ export function ImpactPanel({ environment, domain, configKey }: ImpactPanelProps
 
       {/* Warning message */}
       {hasActiveConsumers && !expanded && (
-        <div className="px-4 pb-3 text-xs text-amber-700">
-          Changes may impact active applications. Click to see details.
+        <div className={clsx('px-4 pb-3 text-xs', isHighRisk ? 'text-red-700 font-medium' : 'text-amber-700')}>
+          {isHighRisk
+            ? 'This change will affect live production applications. Review impacted consumers before proceeding.'
+            : 'Changes may impact active applications. Click to see details.'}
         </div>
       )}
     </div>
