@@ -1,0 +1,33 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install)",
+      "Bash(npm run dev:*)",
+      "Bash(curl:*)",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Bash(taskkill:*)",
+      "Bash(powershell:*)",
+      "Bash(C:/Windows/System32/taskkill.exe //F //PID 21892)",
+      "Bash(npx tsc:*)",
+      "Bash(timeout 10 npm run dev:api)",
+      "Bash(npx kill-port:*)",
+      "Bash(npm run dev:api:*)",
+      "Bash(npm run dev:ui:*)",
+      "Bash(npx tsx:*)",
+      "Bash(az group delete:*)",
+      "Bash(az acr build:*)",
+      "Bash(Select-Object -Last 50)",
+      "Bash(az acr repository show-tags:*)",
+      "Bash(chcp:*)",
+      "Bash(az acr task logs:*)",
+      "Bash(az acr task list-runs:*)",
+      "Bash(az containerapp env list:*)",
+      "Bash(az containerapp env create:*)",
+      "Bash(git remote remove:*)",
+      "Bash(gh repo create:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
+    ]
+  }
+}

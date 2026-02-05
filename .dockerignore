@@ -1,0 +1,44 @@
+# Dependencies
+node_modules
+**/node_modules
+
+# Git
+.git
+**/.git
+
+# Build outputs
+dist
+**/dist
+
+# Data files
+*.db
+config-repo
+**/config-repo
+
+# IDE and editor
+.vscode
+.idea
+*.swp
+*.swo
+
+# Logs
+*.log
+npm-debug.log*
+
+# Environment files
+.env*
+*.local
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Test and misc
+coverage
+.nyc_output
+*.md
+!packages/ui/README.md
+
+# Deployment scripts (not needed in container)
+deploy-azure.ps1
+deploy-azure.sh

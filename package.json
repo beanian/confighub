@@ -1,0 +1,12 @@
+{
+  "name": "confighub",
+  "private": true,
+  "workspaces": ["packages/*"],
+  "scripts": {
+    "dev": "npm run dev:api & npm run dev:ui",
+    "dev:api": "npm run dev -w @confighub/api",
+    "dev:ui": "npm run dev -w @confighub/ui",
+    "build": "npm run build -w @confighub/api && npm run build -w @confighub/ui",
+    "setup": "npm install && npm run dev"
+  }
+}
