@@ -31,7 +31,9 @@ function getStatus(lastHeartbeat: string): ConsumerStatus {
 
 // GET /api/impact/:env/:domain/:key - Get consumers for specific config
 router.get('/:env/:domain/:key', async (req: Request, res: Response) => {
-  const { env, domain, key } = req.params;
+  const { env, domain } = req.params;
+  // Strip .yaml/.yml extension if present for matching
+  const key = req.params.key.replace(/\.ya?ml$/i, '');
 
   if (!['dev', 'staging', 'prod'].includes(env)) {
     return res.status(400).json({ error: 'Invalid environment' });
