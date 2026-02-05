@@ -1,13 +1,8 @@
 #!/bin/sh
 
-# Initialize git repo if empty
-if [ ! -d "/data/config-repo/.git" ]; then
-    echo "Initializing git repository..."
-    cd /data/config-repo
-    git init
-    git config user.email "system@confighub.local"
-    git config user.name "ConfigHub System"
-fi
+# Don't initialize git here - let the Node.js app handle it properly
+# Just ensure the directory exists
+mkdir -p /data/config-repo
 
 cd /app
 
@@ -21,7 +16,7 @@ if [ ! -f "/data/confighub.db" ]; then
 
     # Wait for server to be ready
     echo "Waiting for server to start..."
-    sleep 3
+    sleep 5
 
     # Run seed script
     echo "Seeding demo data..."
