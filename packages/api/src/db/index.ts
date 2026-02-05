@@ -132,6 +132,29 @@ function runMigrations(database: Database): void {
       )
     `);
   }
+
+  // Check if dependencies table exists
+  const depTables = database.exec("SELECT name FROM sqlite_master WHERE type='table' AND name='dependencies'");
+  if (depTables.length === 0 || depTables[0].values.length === 0) {
+    console.log('Running migration: creating dependencies table');
+    database.run(`
+      CREATE TABLE IF NOT EXISTS dependencies (
+        id TEXT PRIMARY KEY,
+        app_name TEXT NOT NULL,
+        app_id TEXT NOT NULL,
+        environment TEXT NOT NULL CHECK (environment IN ('dev', 'staging', 'prod')),
+        domain TEXT NOT NULL,
+        config_keys TEXT NOT NULL,
+        contact_email TEXT,
+        contact_team TEXT,
+        last_heartbeat TEXT DEFAULT (datetime('now')),
+        registered_at TEXT DEFAULT (datetime('now')),
+        metadata TEXT,
+        UNIQUE(app_id, environment)
+      )
+    `);
+    database.run('CREATE INDEX IF NOT EXISTS idx_deps_env_domain ON dependencies(environment, domain)');
+  }
 }
 
 // Helper functions for common operations

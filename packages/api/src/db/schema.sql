@@ -69,3 +69,20 @@ CREATE TABLE IF NOT EXISTS promotion_requests (
     FOREIGN KEY (requested_by) REFERENCES users(id),
     FOREIGN KEY (reviewed_by) REFERENCES users(id)
 );
+
+-- Dependencies (app → config relationships)
+CREATE TABLE IF NOT EXISTS dependencies (
+    id TEXT PRIMARY KEY,
+    app_name TEXT NOT NULL,
+    app_id TEXT NOT NULL,
+    environment TEXT NOT NULL CHECK (environment IN ('dev', 'staging', 'prod')),
+    domain TEXT NOT NULL,
+    config_keys TEXT NOT NULL,
+    contact_email TEXT,
+    contact_team TEXT,
+    last_heartbeat TEXT DEFAULT (datetime('now')),
+    registered_at TEXT DEFAULT (datetime('now')),
+    metadata TEXT,
+    UNIQUE(app_id, environment)
+);
+CREATE INDEX IF NOT EXISTS idx_deps_env_domain ON dependencies(environment, domain);

@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Layout } from '../components/Layout';
 import { DiffViewer } from '../components/DiffViewer';
 import { EnvironmentBadge } from '../components/EnvironmentSwitcher';
+import { ImpactPanel } from '../components/ImpactPanel';
 import { api, PromotionRequest, PromotionPreview } from '../api/client';
 import { useAuth } from '../hooks/useAuth';
 import { Environment } from '../hooks/useEnvironment';
@@ -283,6 +284,15 @@ export function PromotionDetail() {
                 </button>
               ))}
             </div>
+          )}
+
+          {/* Impact Analysis for target environment */}
+          {currentFile && (
+            <ImpactPanel
+              environment={promotion.target_env}
+              domain={promotion.domain}
+              configKey={currentFile.file}
+            />
           )}
 
           {/* Diff view */}

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Layout } from '../components/Layout';
 import { DiffViewer } from '../components/DiffViewer';
+import { ImpactPanel } from '../components/ImpactPanel';
 import { api, ChangeRequest, Operation } from '../api/client';
 import clsx from 'clsx';
 
@@ -143,6 +144,15 @@ export function ChangeDetail() {
             <p className="text-sm text-gray-600 mt-2">{change.description}</p>
           )}
         </div>
+
+        {/* Impact Analysis */}
+        {change.key_name && (
+          <ImpactPanel
+            environment={change.target_environment}
+            domain={change.domain}
+            configKey={change.key_name}
+          />
+        )}
 
         {/* Actions */}
         {config.actions.length > 0 && (

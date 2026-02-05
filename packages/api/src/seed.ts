@@ -1118,6 +1118,88 @@ async function seed() {
 
   console.log('  Created 15 audit entries');
 
+  // Create dependencies
+  console.log('\nCreating dependencies...');
+  await dbRun('DELETE FROM dependencies');
+
+  const dependencies = [
+    {
+      id: 'dep-001',
+      app_name: 'Motor Pricing Engine',
+      app_id: 'motor-pricing-engine',
+      environment: 'prod',
+      domain: 'pricing',
+      config_keys: JSON.stringify(['motor-rates']),
+      contact_email: 'pricing-team@insureco.ie',
+      contact_team: 'Pricing',
+      last_heartbeat: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), // 2 hours ago
+    },
+    {
+      id: 'dep-002',
+      app_name: 'MuleSoft Doc API',
+      app_id: 'mulesoft-doc-api',
+      environment: 'prod',
+      domain: 'documents',
+      config_keys: JSON.stringify(['policy-templates']),
+      contact_email: 'integration@insureco.ie',
+      contact_team: 'Integration',
+      last_heartbeat: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(), // 3 days ago
+    },
+    {
+      id: 'dep-003',
+      app_name: 'Broker Portal',
+      app_id: 'broker-portal',
+      environment: 'prod',
+      domain: 'pricing',
+      config_keys: JSON.stringify(['motor-rates', 'home-rates', 'travel-rates']),
+      contact_email: 'broker-team@insureco.ie',
+      contact_team: 'Broker Services',
+      last_heartbeat: new Date(Date.now() - 30 * 60 * 1000).toISOString(), // 30 mins ago
+    },
+    {
+      id: 'dep-004',
+      app_name: 'Motor Pricing Engine',
+      app_id: 'motor-pricing-engine',
+      environment: 'staging',
+      domain: 'pricing',
+      config_keys: JSON.stringify(['motor-rates']),
+      contact_email: 'pricing-team@insureco.ie',
+      contact_team: 'Pricing',
+      last_heartbeat: new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString(), // 12 hours ago
+    },
+    {
+      id: 'dep-005',
+      app_name: 'Claims Processor',
+      app_id: 'claims-processor',
+      environment: 'prod',
+      domain: 'claims',
+      config_keys: JSON.stringify(['processing-rules', 'notification-templates']),
+      contact_email: 'claims@insureco.ie',
+      contact_team: 'Claims',
+      last_heartbeat: new Date(Date.now() - 15 * 60 * 1000).toISOString(), // 15 mins ago
+    },
+    {
+      id: 'dep-006',
+      app_name: 'Customer Portal',
+      app_id: 'customer-portal',
+      environment: 'prod',
+      domain: 'feature_flags',
+      config_keys: JSON.stringify(['features']),
+      contact_email: 'portal@insureco.ie',
+      contact_team: 'Digital',
+      last_heartbeat: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(), // 10 days ago (inactive)
+    },
+  ];
+
+  for (const dep of dependencies) {
+    await dbRun(
+      `INSERT INTO dependencies (id, app_name, app_id, environment, domain, config_keys, contact_email, contact_team, last_heartbeat)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [dep.id, dep.app_name, dep.app_id, dep.environment, dep.domain, dep.config_keys, dep.contact_email, dep.contact_team, dep.last_heartbeat]
+    );
+    console.log(`  ${dep.app_name} (${dep.environment}/${dep.domain})`);
+  }
+
   console.log('\n✅ Seed complete!\n');
   console.log('Demo accounts:');
   console.log('  admin@confighub.local / admin123 (admin)');

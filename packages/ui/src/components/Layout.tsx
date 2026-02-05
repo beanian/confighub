@@ -34,6 +34,7 @@ const navSections = [
     label: 'Admin',
     items: [
       { path: '/audit', label: 'Audit Log', icon: '◷' },
+      { path: '/dependencies', label: 'Dependencies', icon: '⬡' },
     ],
   },
 ];

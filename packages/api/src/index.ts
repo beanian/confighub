@@ -10,6 +10,8 @@ import changesRoutes from './routes/changes';
 import promotionsRoutes from './routes/promotions';
 import auditRoutes from './routes/audit';
 import driftRoutes from './routes/drift';
+import dependenciesRoutes from './routes/dependencies';
+import impactRoutes from './routes/impact';
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -32,6 +34,8 @@ app.use('/api/changes', changesRoutes);
 app.use('/api/promotions', promotionsRoutes);
 app.use('/api/audit', auditRoutes);
 app.use('/api/drift', driftRoutes);
+app.use('/api/dependencies', dependenciesRoutes);
+app.use('/api/impact', impactRoutes);
 
 // Serve static UI in production
 if (isProduction) {

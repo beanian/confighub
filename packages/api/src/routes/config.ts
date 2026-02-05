@@ -2,6 +2,7 @@ import { Router, Request, Response } from 'express';
 import { getConfig, listKeys, listDomains } from '../services/git';
 import { getConfigHistory, getConfigAtCommit, rollbackConfig } from '../services/promotion';
 import { logAudit, AuditActions } from '../services/audit';
+import { dbRun } from '../db';
 import yaml from 'js-yaml';
 
 const router = Router();
@@ -43,6 +44,15 @@ router.get('/:env/:domain/:key', async (req: Request, res: Response) => {
 
     if (!result) {
       return res.status(404).json({ error: `Config not found: ${domain}/${key}` });
+    }
+
+    // Update heartbeat if X-ConfigHub-App-Id header present
+    const appId = req.headers['x-confighub-app-id'] as string | undefined;
+    if (appId) {
+      dbRun(
+        "UPDATE dependencies SET last_heartbeat = datetime('now') WHERE app_id = ? AND environment = ?",
+        [appId, env]
+      ).catch((err) => console.error('Error updating heartbeat:', err));
     }
 
     res.json({

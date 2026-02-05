@@ -14,6 +14,7 @@ import { Promotions } from './pages/Promotions';
 import { PromotionDetail } from './pages/PromotionDetail';
 import { AuditLog } from './pages/AuditLog';
 import { Drift } from './pages/Drift';
+import { Dependencies } from './pages/Dependencies';
 import './index.css';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -114,6 +115,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <Drift />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/dependencies"
+              element={
+                <ProtectedRoute>
+                  <Dependencies />
                 </ProtectedRoute>
               }
             />

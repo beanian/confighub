@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Layout } from '../components/Layout';
 import { DiffViewer } from '../components/DiffViewer';
+import { ImpactPanel } from '../components/ImpactPanel';
 import { api } from '../api/client';
 import Editor, { OnMount } from '@monaco-editor/react';
 import type { editor } from 'monaco-editor';
@@ -240,6 +241,11 @@ export function EditConfig() {
             className="w-full bg-transparent border-none outline-none text-sm text-gray-600 placeholder:text-gray-400"
           />
         </div>
+
+        {/* Impact Analysis */}
+        {env && domain && key && (
+          <ImpactPanel environment={env} domain={domain} configKey={key} />
+        )}
 
         {/* Errors */}
         {error && (

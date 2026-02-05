@@ -150,6 +150,53 @@ export interface DriftDiff {
   diff: string;
 }
 
+export interface Dependency {
+  id: string;
+  app_name: string;
+  app_id: string;
+  environment: string;
+  domain: string;
+  config_keys: string[];
+  contact_email: string | null;
+  contact_team: string | null;
+  last_heartbeat: string;
+  registered_at: string;
+  metadata: Record<string, unknown> | null;
+}
+
+export interface DependencySummary {
+  total: number;
+  dev: number;
+  staging: number;
+  prod: number;
+}
+
+export type ConsumerStatus = 'active' | 'stale' | 'inactive';
+
+export interface Consumer {
+  app_id: string;
+  app_name: string;
+  contact_email: string | null;
+  contact_team: string | null;
+  last_heartbeat: string;
+  registered_at: string;
+  status: ConsumerStatus;
+  metadata: Record<string, unknown> | null;
+}
+
+export interface ImpactAnalysis {
+  environment: string;
+  domain: string;
+  key: string;
+  consumers: Consumer[];
+  consumer_count: number;
+  status_counts: {
+    active: number;
+    stale: number;
+    inactive: number;
+  };
+}
+
 class ApiClient {
   private token: string | null = null;
 
@@ -393,6 +440,50 @@ class ApiClient {
 
   async getDriftDiff(domain: string, key: string, source: string, target: string): Promise<DriftDiff> {
     return this.fetch(`/drift/${domain}/${key}/diff?source=${source}&target=${target}`);
+  }
+
+  // Dependencies
+  async getDependencies(filters?: {
+    environment?: string;
+    domain?: string;
+    app_id?: string;
+  }): Promise<Dependency[]> {
+    const params = new URLSearchParams();
+    if (filters?.environment) params.set('environment', filters.environment);
+    if (filters?.domain) params.set('domain', filters.domain);
+    if (filters?.app_id) params.set('app_id', filters.app_id);
+    const query = params.toString();
+    return this.fetch(`/dependencies${query ? `?${query}` : ''}`);
+  }
+
+  async getDependencySummary(): Promise<DependencySummary> {
+    return this.fetch('/dependencies/summary');
+  }
+
+  async registerDependency(data: {
+    app_name: string;
+    app_id: string;
+    environment: string;
+    domain: string;
+    config_keys: string[];
+    contact_email?: string;
+    contact_team?: string;
+    metadata?: Record<string, unknown>;
+  }): Promise<Dependency> {
+    return this.fetch('/dependencies', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async deleteDependency(appId: string, environment?: string): Promise<{ success: boolean }> {
+    const query = environment ? `?environment=${environment}` : '';
+    return this.fetch(`/dependencies/${appId}${query}`, { method: 'DELETE' });
+  }
+
+  // Impact analysis
+  async getImpactAnalysis(env: string, domain: string, key: string): Promise<ImpactAnalysis> {
+    return this.fetch(`/impact/${env}/${domain}/${key}`);
   }
 }
 

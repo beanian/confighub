@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Layout } from '../components/Layout';
 import { EnvironmentBadge } from '../components/EnvironmentSwitcher';
-import { api, ChangeRequest, PromotionRequest } from '../api/client';
+import { api, ChangeRequest, PromotionRequest, DependencySummary } from '../api/client';
 import { useEnvironment, environments, Environment } from '../hooks/useEnvironment';
 import clsx from 'clsx';
 
@@ -11,17 +11,20 @@ export function Dashboard() {
   const [changes, setChanges] = useState<ChangeRequest[]>([]);
   const [promotions, setPromotions] = useState<PromotionRequest[]>([]);
   const [envStats, setEnvStats] = useState<Record<string, { domains: number; configs: number }>>({});
+  const [depSummary, setDepSummary] = useState<DependencySummary | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     Promise.all([
       api.getChangeRequests().catch(() => []),
       api.getPromotions().catch(() => []),
+      api.getDependencySummary().catch(() => null),
       loadEnvStats(),
     ])
-      .then(([changesData, promotionsData]) => {
+      .then(([changesData, promotionsData, depData]) => {
         setChanges(changesData);
         setPromotions(promotionsData);
+        setDepSummary(depData);
       })
       .finally(() => setLoading(false));
   }, []);
@@ -59,7 +62,7 @@ export function Dashboard() {
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
           <div className="bg-surface-raised border border-border rounded-lg p-4">
             <div className="text-3xl font-semibold text-warning">{pendingReview.length}</div>
             <div className="text-sm text-gray-600 mt-1">Changes Pending Review</div>
@@ -76,6 +79,20 @@ export function Dashboard() {
             <div className="text-3xl font-semibold text-amber-600">{approvedPromotions.length}</div>
             <div className="text-sm text-gray-600 mt-1">Promotions Ready</div>
           </div>
+          <Link
+            to="/dependencies"
+            className="bg-surface-raised border border-border rounded-lg p-4 hover:border-accent transition-fast"
+          >
+            <div className="text-3xl font-semibold text-purple-600">{depSummary?.total || 0}</div>
+            <div className="text-sm text-gray-600 mt-1">Connected Apps</div>
+            {depSummary && (
+              <div className="flex gap-2 mt-2 text-xs text-gray-500">
+                <span>D:{depSummary.dev}</span>
+                <span>S:{depSummary.staging}</span>
+                <span>P:{depSummary.prod}</span>
+              </div>
+            )}
+          </Link>
         </div>
 
         {/* Environment Health */}
