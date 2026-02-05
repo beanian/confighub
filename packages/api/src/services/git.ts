@@ -66,15 +66,22 @@ export async function initializeRepo(): Promise<void> {
     // Reset the cached git instance so it uses the newly initialized repo
     git = null;
 
+    // Create config directory with a README so we have something to commit
+    const configPath = path.join(REPO_PATH, 'config');
+    if (!fs.existsSync(configPath)) {
+      fs.mkdirSync(configPath, { recursive: true });
+    }
+    fs.writeFileSync(path.join(configPath, '.gitkeep'), '# ConfigHub repository\n');
+
     const g = getGit();
 
-    // Create initial commit with all config files
+    // Create initial commit
     await g.add('.');
     await g.commit('Initial commit');
 
     // Rename default branch to main if needed
     const branches = await g.branchLocal();
-    if (branches.current !== 'main') {
+    if (branches.current && branches.current !== 'main') {
       await g.branch(['-m', branches.current, 'main']);
     }
 
@@ -114,7 +121,7 @@ export async function getConfig(
 
       return { content, commitSha, raw };
     } finally {
-      if (currentBranch !== branch) {
+      if (currentBranch && currentBranch !== branch) {
         await g.checkout(currentBranch);
       }
     }
@@ -142,7 +149,7 @@ export async function listKeys(env: string, domain: string): Promise<string[]> {
         .filter(f => f.endsWith('.yaml') && f !== 'schema.yaml')
         .map(f => f.replace('.yaml', ''));
     } finally {
-      if (currentBranch !== branch) {
+      if (currentBranch && currentBranch !== branch) {
         await g.checkout(currentBranch);
       }
     }
@@ -170,7 +177,7 @@ export async function listDomains(env: string): Promise<string[]> {
         .filter(e => e.isDirectory())
         .map(e => e.name);
     } finally {
-      if (currentBranch !== branch) {
+      if (currentBranch && currentBranch !== branch) {
         await g.checkout(currentBranch);
       }
     }
