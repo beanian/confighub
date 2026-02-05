@@ -207,7 +207,7 @@ export function Drift() {
       <Layout>
         <div className="flex items-center justify-center h-full">
           <div className="text-center">
-            <div className="w-16 h-16 border-4 border-accent border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+            <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
             <p className="text-gray-500">Analyzing environment drift...</p>
           </div>
         </div>
@@ -231,7 +231,7 @@ export function Drift() {
         {/* Main content */}
         <div className="flex-1 flex flex-col overflow-hidden">
           {/* Header with summary */}
-          <div className="p-6 border-b border-border bg-gradient-to-r from-gray-50 to-white">
+          <div className="p-6 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-white">
             <div className="flex items-start justify-between">
               <div>
                 <h1 className="text-2xl font-bold text-gray-900 mb-1">
@@ -243,7 +243,7 @@ export function Drift() {
               </div>
               <button
                 onClick={loadAnalysis}
-                className="px-4 py-2 bg-accent text-white rounded-lg hover:bg-accent-hover transition-fast text-sm font-medium flex items-center gap-2"
+                className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all text-sm font-medium flex items-center gap-2"
               >
                 <span>↻</span> Refresh
               </button>
@@ -297,7 +297,7 @@ export function Drift() {
                   {/* Domain header */}
                   <button
                     onClick={() => toggleDomain(domain.domain)}
-                    className="w-full px-4 py-3 flex items-center justify-between hover:bg-gray-50 transition-fast"
+                    className="w-full px-4 py-3 flex items-center justify-between hover:bg-gray-50 transition-all"
                   >
                     <div className="flex items-center gap-3">
                       <span className="text-gray-400">
@@ -360,10 +360,10 @@ export function Drift() {
                           <div
                             key={config.key}
                             className={clsx(
-                              'grid grid-cols-[1fr,auto,auto,auto,auto,auto] gap-2 px-4 py-2 items-center border-t border-gray-100 hover:bg-gray-50 transition-fast',
+                              'grid grid-cols-[1fr,auto,auto,auto,auto,auto] gap-2 px-4 py-2 items-center border-t border-gray-100 hover:bg-gray-50 transition-all',
                               selectedConfig?.domain === domain.domain &&
                                 selectedConfig?.key === config.key &&
-                                'bg-accent/5'
+                                'bg-blue-50'
                             )}
                           >
                             <div className="flex items-center gap-2">
@@ -459,7 +459,7 @@ export function Drift() {
                                   handlePromote(domain.domain, driftedKeys, 'dev');
                                 }
                               }}
-                              className="px-3 py-1.5 text-xs font-medium bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-fast"
+                              className="px-3 py-1.5 text-xs font-medium bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-all"
                             >
                               Sync to Staging
                             </button>
@@ -472,7 +472,7 @@ export function Drift() {
                                   handlePromote(domain.domain, driftedKeys, 'staging');
                                 }
                               }}
-                              className="px-3 py-1.5 text-xs font-medium bg-amber-100 text-amber-700 rounded-lg hover:bg-amber-200 transition-fast"
+                              className="px-3 py-1.5 text-xs font-medium bg-amber-100 text-amber-700 rounded-lg hover:bg-amber-200 transition-all"
                             >
                               Sync to Prod
                             </button>
@@ -495,8 +495,8 @@ export function Drift() {
 
         {/* Diff sidebar */}
         {selectedConfig && (
-          <div className="w-[500px] border-l border-border bg-white flex flex-col">
-            <div className="p-4 border-b border-border flex items-center justify-between bg-gray-50">
+          <div className="w-[500px] border-l border-gray-200 bg-white flex flex-col">
+            <div className="p-4 border-b border-gray-200 flex items-center justify-between bg-gray-50">
               <div>
                 <div className="font-mono text-sm font-semibold text-gray-900">
                   {selectedConfig.domain}/{selectedConfig.key}
@@ -540,7 +540,7 @@ export function Drift() {
                           [selectedConfig.key],
                           selectedConfig.source
                         )}
-                        className="w-full py-2 bg-accent text-white rounded-lg hover:bg-accent-hover transition-fast text-sm font-medium"
+                        className="w-full py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all text-sm font-medium"
                       >
                         Create Promotion Request
                       </button>

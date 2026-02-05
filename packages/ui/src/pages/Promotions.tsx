@@ -132,12 +132,12 @@ export function Promotions() {
     <Layout>
       <div className="h-full flex flex-col">
         {/* Header */}
-        <div className="p-4 border-b border-border bg-surface-raised">
+        <div className="p-4 border-b border-gray-200 bg-white">
           <div className="flex items-center justify-between mb-4">
             <h1 className="text-lg font-semibold text-gray-900">Environment Promotions</h1>
             <button
               onClick={() => setShowCreateForm(!showCreateForm)}
-              className="px-4 py-2 bg-accent text-white rounded-md hover:bg-accent-hover transition-fast text-sm font-medium"
+              className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-all text-sm font-medium"
             >
               {showCreateForm ? 'Cancel' : 'New Promotion'}
             </button>
@@ -145,7 +145,7 @@ export function Promotions() {
 
           {/* Create form */}
           {showCreateForm && (
-            <div className="bg-white border border-border rounded-lg p-4 mb-4">
+            <div className="bg-white border border-gray-200 rounded-lg p-4 mb-4">
               <h2 className="text-sm font-semibold text-gray-900 mb-3">Create Promotion Request</h2>
 
               {/* Pipeline visualization */}
@@ -167,7 +167,7 @@ export function Promotions() {
                       setSelectedDomain('');
                       setSelectedKeys([]);
                     }}
-                    className="w-full px-3 py-2 border border-border rounded-md text-sm"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
                   >
                     <option value="dev">Development</option>
                     <option value="staging">Staging</option>
@@ -179,7 +179,7 @@ export function Promotions() {
                   <select
                     value={selectedDomain}
                     onChange={(e) => setSelectedDomain(e.target.value)}
-                    className="w-full px-3 py-2 border border-border rounded-md text-sm font-mono"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm font-mono"
                   >
                     {domains.map((d) => (
                       <option key={d} value={d}>
@@ -193,7 +193,7 @@ export function Promotions() {
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Target Environment
                   </label>
-                  <div className="px-3 py-2 bg-gray-100 border border-border rounded-md text-sm text-gray-600">
+                  <div className="px-3 py-2 bg-gray-100 border border-gray-300 rounded-md text-sm text-gray-600">
                     {targetEnv === 'staging' ? 'Staging' : 'Production'}
                   </div>
                 </div>
@@ -204,7 +204,7 @@ export function Promotions() {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Select configs to promote ({selectedKeys.length} selected)
                 </label>
-                <div className="border border-border rounded-md max-h-48 overflow-auto">
+                <div className="border border-gray-200 rounded-md max-h-48 overflow-auto">
                   {keys.length === 0 ? (
                     <div className="p-4 text-sm text-gray-500 text-center">
                       No configs in this domain
@@ -213,7 +213,7 @@ export function Promotions() {
                     keys.map((key) => (
                       <label
                         key={key}
-                        className="flex items-center px-3 py-2 hover:bg-gray-50 cursor-pointer border-b border-border last:border-0"
+                        className="flex items-center px-3 py-2 hover:bg-gray-50 cursor-pointer border-b border-gray-200 last:border-0"
                       >
                         <input
                           type="checkbox"
@@ -237,7 +237,7 @@ export function Promotions() {
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
                   placeholder="Explain why these configs are being promoted..."
-                  className="w-full px-3 py-2 border border-border rounded-md text-sm"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
                   rows={2}
                 />
               </div>
@@ -245,7 +245,7 @@ export function Promotions() {
               <button
                 onClick={handleCreate}
                 disabled={selectedKeys.length === 0 || creating}
-                className="px-4 py-2 bg-accent text-white rounded-md hover:bg-accent-hover transition-fast text-sm font-medium disabled:opacity-50"
+                className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-all text-sm font-medium disabled:opacity-50"
               >
                 {creating ? 'Creating...' : 'Create Promotion Request'}
               </button>
@@ -259,9 +259,9 @@ export function Promotions() {
                 key={f}
                 onClick={() => setFilter(f)}
                 className={clsx(
-                  'px-3 py-1.5 text-sm font-medium rounded-md transition-fast',
+                  'px-3 py-1.5 text-sm font-medium rounded-md transition-all',
                   filter === f
-                    ? 'bg-accent text-white'
+                    ? 'bg-blue-500 text-white'
                     : 'text-gray-600 hover:bg-gray-100'
                 )}
               >
@@ -287,11 +287,11 @@ export function Promotions() {
                 <Link
                   key={promotion.id}
                   to={`/promotions/${promotion.id}`}
-                  className="block bg-white border border-border rounded-lg p-4 hover:border-accent transition-fast"
+                  className="block bg-white border border-gray-200 rounded-lg p-4 hover:border-blue-400 transition-all"
                 >
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-3">
-                      <span className="font-mono text-sm font-medium text-accent">
+                      <span className="font-mono text-sm font-medium text-blue-500">
                         {promotion.id}
                       </span>
                       <span

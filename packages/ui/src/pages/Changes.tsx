@@ -45,7 +45,7 @@ export function Changes() {
           <h1 className="text-2xl font-semibold text-gray-900">Change Requests</h1>
           <Link
             to="/browse"
-            className="px-4 py-2 bg-accent hover:bg-accent-hover text-white text-sm font-medium rounded-md transition-fast"
+            className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium rounded-md transition-all"
           >
             New Change
           </Link>
@@ -58,7 +58,7 @@ export function Changes() {
               key={status}
               onClick={() => setFilter(status)}
               className={clsx(
-                'px-3 py-1.5 text-sm font-medium rounded-md transition-fast',
+                'px-3 py-1.5 text-sm font-medium rounded-md transition-all',
                 filter === status
                   ? 'bg-gray-900 text-white'
                   : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
@@ -77,14 +77,14 @@ export function Changes() {
         ) : filteredChanges.length === 0 ? (
           <div className="text-gray-400">No change requests found</div>
         ) : (
-          <div className="bg-surface-raised border border-border rounded-lg divide-y divide-border">
+          <div className="bg-white border border-gray-200 rounded-lg divide-y divide-gray-200">
             {filteredChanges.map((change) => {
               const operation = change.operation || 'update';
               return (
                 <Link
                   key={change.id}
                   to={`/changes/${change.id}`}
-                  className="flex items-center justify-between px-4 py-3 hover:bg-gray-50 transition-fast"
+                  className="flex items-center justify-between px-4 py-3 hover:bg-gray-50 transition-all"
                 >
                   <div className="flex items-center gap-3">
                     <span

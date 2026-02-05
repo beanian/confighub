@@ -58,6 +58,46 @@ export function DependencyGraph({ dependencies }: DependencyGraphProps) {
   const svgRef = useRef<SVGSVGElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [tooltip, setTooltip] = useState<{ x: number; y: number; content: React.ReactNode } | null>(null);
+  const zoomRef = useRef<d3.ZoomBehavior<SVGSVGElement, unknown> | null>(null);
+  const nodesRef = useRef<GraphNode[]>([]);
+
+  const fitToView = () => {
+    if (!svgRef.current || !containerRef.current || nodesRef.current.length === 0) return;
+
+    const nodes = nodesRef.current;
+    const container = containerRef.current;
+    const svg = d3.select(svgRef.current);
+    const zoom = zoomRef.current;
+    if (!zoom) return;
+
+    // Calculate bounding box of all nodes
+    const padding = 80;
+    const xs = nodes.map(n => n.x || 0);
+    const ys = nodes.map(n => n.y || 0);
+    const minX = Math.min(...xs) - padding;
+    const maxX = Math.max(...xs) + padding;
+    const minY = Math.min(...ys) - padding;
+    const maxY = Math.max(...ys) + padding;
+
+    const width = container.clientWidth;
+    const height = container.clientHeight;
+    const graphWidth = maxX - minX;
+    const graphHeight = maxY - minY;
+
+    // Calculate scale to fit
+    const scale = Math.min(width / graphWidth, height / graphHeight, 1.5);
+    const centerX = (minX + maxX) / 2;
+    const centerY = (minY + maxY) / 2;
+
+    // Apply transform
+    svg.transition().duration(500).call(
+      zoom.transform,
+      d3.zoomIdentity
+        .translate(width / 2, height / 2)
+        .scale(scale)
+        .translate(-centerX, -centerY)
+    );
+  };
 
   useEffect(() => {
     if (!svgRef.current || !containerRef.current || dependencies.length === 0) return;
@@ -104,6 +144,7 @@ export function DependencyGraph({ dependencies }: DependencyGraphProps) {
     });
 
     const nodes = Array.from(nodeMap.values());
+    nodesRef.current = nodes;
 
     // Clear previous
     const svg = d3.select(svgRef.current);
@@ -120,6 +161,7 @@ export function DependencyGraph({ dependencies }: DependencyGraphProps) {
       });
 
     svg.call(zoom);
+    zoomRef.current = zoom;
 
     // Create force simulation
     const simulation = d3.forceSimulation<GraphNode>(nodes)
@@ -128,7 +170,7 @@ export function DependencyGraph({ dependencies }: DependencyGraphProps) {
         .distance(120))
       .force('charge', d3.forceManyBody().strength(-300))
       .force('center', d3.forceCenter(width / 2, height / 2))
-      .force('collision', d3.forceCollide().radius(50));
+      .force('collision', d3.forceCollide().radius(85));
 
     // Draw edges
     const link = g.append('g')
@@ -165,7 +207,7 @@ export function DependencyGraph({ dependencies }: DependencyGraphProps) {
       .call(drag);
 
     // Hexagon path
-    const hexRadius = 30;
+    const hexRadius = 60;
     const hexPoints = (r: number) => {
       const points = [];
       for (let i = 0; i < 6; i++) {
@@ -181,13 +223,23 @@ export function DependencyGraph({ dependencies }: DependencyGraphProps) {
       .attr('stroke', '#fff')
       .attr('stroke-width', 2);
 
+    // Domain label (top)
     configNodes.append('text')
-      .text((d) => d.label.length > 10 ? d.label.slice(0, 9) + '...' : d.label)
+      .text((d) => d.domain || '')
       .attr('text-anchor', 'middle')
-      .attr('dy', 4)
+      .attr('dy', -8)
       .attr('fill', '#fff')
-      .attr('font-size', 10)
-      .attr('font-weight', 500);
+      .attr('font-size', 11)
+      .attr('font-weight', 400);
+
+    // Key label (bottom)
+    configNodes.append('text')
+      .text((d) => d.label.length > 20 ? d.label.slice(0, 19) + '...' : d.label)
+      .attr('text-anchor', 'middle')
+      .attr('dy', 12)
+      .attr('fill', '#fff')
+      .attr('font-size', 11)
+      .attr('font-weight', 600);
 
     // Draw app nodes (rounded rectangles)
     const appNodes = g.append('g')
@@ -198,21 +250,21 @@ export function DependencyGraph({ dependencies }: DependencyGraphProps) {
       .call(drag);
 
     appNodes.append('rect')
-      .attr('width', 100)
-      .attr('height', 36)
-      .attr('x', -50)
-      .attr('y', -18)
+      .attr('width', 140)
+      .attr('height', 44)
+      .attr('x', -70)
+      .attr('y', -22)
       .attr('rx', 8)
       .attr('fill', (d) => statusColors[d.status || 'inactive'])
       .attr('stroke', '#fff')
       .attr('stroke-width', 2);
 
     appNodes.append('text')
-      .text((d) => d.label.length > 12 ? d.label.slice(0, 11) + '...' : d.label)
+      .text((d) => d.label.length > 18 ? d.label.slice(0, 17) + '...' : d.label)
       .attr('text-anchor', 'middle')
-      .attr('dy', 4)
+      .attr('dy', 5)
       .attr('fill', '#fff')
-      .attr('font-size', 11)
+      .attr('font-size', 13)
       .attr('font-weight', 500);
 
     // Hover effects
@@ -241,7 +293,7 @@ export function DependencyGraph({ dependencies }: DependencyGraphProps) {
           content: (
             <div>
               <div className="font-medium">{node.label}</div>
-              <div className="text-xs text-gray-400">
+              <div className="text-xs text-gray-500">
                 {node.type === 'config' ? `Domain: ${node.domain}` : `Env: ${node.environment}`}
               </div>
               {node.status && (
@@ -277,13 +329,23 @@ export function DependencyGraph({ dependencies }: DependencyGraphProps) {
   }, [dependencies]);
 
   return (
-    <div ref={containerRef} className="relative w-full h-full bg-gray-900 rounded-lg overflow-hidden">
+    <div ref={containerRef} className="relative w-full h-full bg-gray-100 rounded-lg overflow-hidden border border-gray-200">
       <svg ref={svgRef} className="w-full h-full" />
+
+      {/* Controls */}
+      <div className="absolute top-4 right-4 flex gap-2">
+        <button
+          onClick={fitToView}
+          className="px-3 py-1.5 bg-white text-gray-700 text-xs font-medium rounded-md border border-gray-200 shadow-sm hover:bg-gray-50 transition-all"
+        >
+          Fit to View
+        </button>
+      </div>
 
       {/* Tooltip */}
       {tooltip && (
         <div
-          className="absolute bg-gray-800 text-white px-3 py-2 rounded-lg shadow-lg text-sm pointer-events-none z-10"
+          className="absolute bg-white text-gray-900 px-3 py-2 rounded-lg shadow-lg text-sm pointer-events-none z-10 border border-gray-200"
           style={{ left: tooltip.x, top: tooltip.y }}
         >
           {tooltip.content}
@@ -291,7 +353,7 @@ export function DependencyGraph({ dependencies }: DependencyGraphProps) {
       )}
 
       {/* Legend */}
-      <div className="absolute bottom-4 left-4 bg-gray-800/90 rounded-lg p-3 text-xs text-white">
+      <div className="absolute bottom-4 left-4 bg-white/95 rounded-lg p-3 text-xs text-gray-700 border border-gray-200 shadow-sm">
         <div className="font-medium mb-2">Legend</div>
         <div className="space-y-1">
           <div className="flex items-center gap-2">
@@ -307,7 +369,7 @@ export function DependencyGraph({ dependencies }: DependencyGraphProps) {
             <span>Inactive (&gt;7d)</span>
           </div>
         </div>
-        <div className="border-t border-gray-600 mt-2 pt-2">
+        <div className="border-t border-gray-200 mt-2 pt-2">
           <div className="flex items-center gap-2">
             <svg width="12" height="12" viewBox="0 0 12 12">
               <polygon points="6,0 12,3 12,9 6,12 0,9 0,3" fill="#60a5fa" />

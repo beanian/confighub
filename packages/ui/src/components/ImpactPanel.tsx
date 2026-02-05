@@ -43,7 +43,7 @@ export function ImpactPanel({ environment, domain, configKey }: ImpactPanelProps
 
   if (loading) {
     return (
-      <div className="px-4 py-3 bg-gray-50 border-b border-border">
+      <div className="px-4 py-3 bg-gray-50 border-b border-gray-200">
         <div className="text-sm text-gray-500">Loading impact analysis...</div>
       </div>
     );
@@ -51,7 +51,7 @@ export function ImpactPanel({ environment, domain, configKey }: ImpactPanelProps
 
   if (!impact || impact.consumer_count === 0) {
     return (
-      <div className="px-4 py-3 bg-gray-50 border-b border-border">
+      <div className="px-4 py-3 bg-gray-50 border-b border-gray-200">
         <div className="flex items-center gap-2 text-sm text-gray-500">
           <span className="w-2 h-2 rounded-full bg-gray-300" />
           No registered consumers for this config
@@ -66,13 +66,13 @@ export function ImpactPanel({ environment, domain, configKey }: ImpactPanelProps
     <div
       className={clsx(
         'border-b',
-        hasActiveConsumers ? 'bg-amber-50 border-amber-200' : 'bg-gray-50 border-border'
+        hasActiveConsumers ? 'bg-amber-50 border-amber-200' : 'bg-gray-50 border-gray-200'
       )}
     >
       {/* Header / Warning Banner */}
       <button
         onClick={() => setExpanded(!expanded)}
-        className="w-full px-4 py-3 flex items-center justify-between text-left hover:bg-black/5 transition-fast"
+        className="w-full px-4 py-3 flex items-center justify-between text-left hover:bg-black/5 transition-all"
       >
         <div className="flex items-center gap-3">
           {hasActiveConsumers && (
@@ -138,7 +138,7 @@ export function ImpactPanel({ environment, domain, configKey }: ImpactPanelProps
                     {consumer.contact_team && <span>{consumer.contact_team}</span>}
                     {consumer.contact_team && consumer.contact_email && <span> · </span>}
                     {consumer.contact_email && (
-                      <a href={`mailto:${consumer.contact_email}`} className="text-accent hover:underline">
+                      <a href={`mailto:${consumer.contact_email}`} className="text-blue-500 hover:underline">
                         {consumer.contact_email}
                       </a>
                     )}

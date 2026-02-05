@@ -118,12 +118,12 @@ export function AuditLog() {
 
   return (
     <Layout>
-      <div className="h-full flex flex-col bg-gray-900 text-gray-100">
+      <div className="h-full flex flex-col">
         {/* Header */}
-        <div className="px-4 py-3 border-b border-gray-700 bg-gray-800">
+        <div className="px-4 py-3 border-b border-gray-200 bg-white">
           <div className="flex items-center justify-between mb-3">
-            <h1 className="text-sm font-semibold text-gray-100 tracking-wide">
-              AUDIT LOG
+            <h1 className="text-lg font-semibold text-gray-900">
+              Audit Log
             </h1>
             <span className="text-xs text-gray-500 font-mono">
               {total.toLocaleString()} entries
@@ -138,7 +138,7 @@ export function AuditLog() {
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
                 placeholder="Search..."
-                className="w-full px-3 py-1.5 bg-gray-700 border border-gray-600 rounded text-sm text-gray-100 placeholder-gray-500 focus:outline-none focus:border-blue-500"
+                className="w-full px-3 py-1.5 bg-white border border-gray-300 rounded text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-500"
               />
             </form>
 
@@ -148,7 +148,7 @@ export function AuditLog() {
                 setEnvFilter(e.target.value);
                 setPage(0);
               }}
-              className="px-3 py-1.5 bg-gray-700 border border-gray-600 rounded text-sm text-gray-100 focus:outline-none focus:border-blue-500"
+              className="px-3 py-1.5 bg-white border border-gray-300 rounded text-sm text-gray-900 focus:outline-none focus:border-blue-500"
             >
               <option value="">All Environments</option>
               <option value="dev">Development</option>
@@ -162,7 +162,7 @@ export function AuditLog() {
                 setActionFilter(e.target.value);
                 setPage(0);
               }}
-              className="px-3 py-1.5 bg-gray-700 border border-gray-600 rounded text-sm text-gray-100 focus:outline-none focus:border-blue-500"
+              className="px-3 py-1.5 bg-white border border-gray-300 rounded text-sm text-gray-900 focus:outline-none focus:border-blue-500"
             >
               <option value="">All Actions</option>
               <optgroup label="Change Requests">
@@ -197,7 +197,7 @@ export function AuditLog() {
                   setSearchInput('');
                   setPage(0);
                 }}
-                className="px-3 py-1.5 text-xs text-gray-400 hover:text-gray-200"
+                className="px-3 py-1.5 text-xs text-gray-500 hover:text-gray-700"
               >
                 Clear filters
               </button>
@@ -208,30 +208,30 @@ export function AuditLog() {
         {/* Table */}
         <div className="flex-1 overflow-auto">
           <table className="w-full text-xs">
-            <thead className="bg-gray-800 sticky top-0">
-              <tr className="border-b border-gray-700">
-                <th className="text-left px-3 py-2 font-medium text-gray-400 w-32">
+            <thead className="bg-gray-50 sticky top-0">
+              <tr className="border-b border-gray-200">
+                <th className="text-left px-3 py-2 font-medium text-gray-500 w-32">
                   TIMESTAMP
                 </th>
-                <th className="text-left px-3 py-2 font-medium text-gray-400 w-32">
+                <th className="text-left px-3 py-2 font-medium text-gray-500 w-32">
                   ACTOR
                 </th>
-                <th className="text-left px-3 py-2 font-medium text-gray-400 w-28">
+                <th className="text-left px-3 py-2 font-medium text-gray-500 w-28">
                   ACTION
                 </th>
-                <th className="text-left px-3 py-2 font-medium text-gray-400 w-20">
+                <th className="text-left px-3 py-2 font-medium text-gray-500 w-20">
                   ENV
                 </th>
-                <th className="text-left px-3 py-2 font-medium text-gray-400 w-24">
+                <th className="text-left px-3 py-2 font-medium text-gray-500 w-24">
                   DOMAIN
                 </th>
-                <th className="text-left px-3 py-2 font-medium text-gray-400 w-24">
+                <th className="text-left px-3 py-2 font-medium text-gray-500 w-24">
                   ENTITY
                 </th>
-                <th className="text-left px-3 py-2 font-medium text-gray-400">
+                <th className="text-left px-3 py-2 font-medium text-gray-500">
                   DETAILS
                 </th>
-                <th className="text-left px-3 py-2 font-medium text-gray-400 w-20">
+                <th className="text-left px-3 py-2 font-medium text-gray-500 w-20">
                   COMMIT
                 </th>
               </tr>
@@ -258,21 +258,21 @@ export function AuditLog() {
                     <tr
                       key={entry.id}
                       className={clsx(
-                        'border-b border-gray-800 hover:bg-gray-800/50',
-                        idx % 2 === 0 ? 'bg-gray-900' : 'bg-gray-900/50'
+                        'border-b border-gray-100 hover:bg-gray-50',
+                        idx % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'
                       )}
                     >
-                      <td className="px-3 py-2 font-mono text-gray-400" title={ts.full}>
+                      <td className="px-3 py-2 font-mono text-gray-500" title={ts.full}>
                         {ts.relative}
                       </td>
-                      <td className="px-3 py-2 text-gray-300 truncate max-w-[120px]">
+                      <td className="px-3 py-2 text-gray-700 truncate max-w-[120px]">
                         {entry.actor.split('@')[0]}
                       </td>
                       <td className="px-3 py-2">
                         <span
                           className={clsx(
                             'font-medium',
-                            actionColors[entry.action] || 'text-gray-400'
+                            actionColors[entry.action] || 'text-gray-600'
                           )}
                         >
                           {actionLabels[entry.action] || entry.action}
@@ -283,24 +283,24 @@ export function AuditLog() {
                           <EnvironmentBadge env={entry.environment as Environment} />
                         )}
                       </td>
-                      <td className="px-3 py-2 font-mono text-gray-400 truncate max-w-[100px]">
+                      <td className="px-3 py-2 font-mono text-gray-500 truncate max-w-[100px]">
                         {entry.domain || '-'}
                       </td>
                       <td className="px-3 py-2 font-mono">
                         {link ? (
                           <Link
                             to={link}
-                            className="text-blue-400 hover:text-blue-300 hover:underline"
+                            className="text-blue-500 hover:text-blue-600 hover:underline"
                           >
                             {entry.entity_id}
                           </Link>
                         ) : (
-                          <span className="text-gray-500">
+                          <span className="text-gray-400">
                             {entry.entity_id || '-'}
                           </span>
                         )}
                       </td>
-                      <td className="px-3 py-2 text-gray-400 truncate max-w-[200px]">
+                      <td className="px-3 py-2 text-gray-500 truncate max-w-[200px]">
                         {entry.details
                           ? Object.entries(entry.details)
                               .filter(([_, v]) => v != null)
@@ -308,7 +308,7 @@ export function AuditLog() {
                               .join(' ')
                           : '-'}
                       </td>
-                      <td className="px-3 py-2 font-mono text-gray-500">
+                      <td className="px-3 py-2 font-mono text-gray-400">
                         {entry.commit_sha ? entry.commit_sha.substring(0, 7) : '-'}
                       </td>
                     </tr>
@@ -320,7 +320,7 @@ export function AuditLog() {
         </div>
 
         {/* Pagination */}
-        <div className="px-4 py-2 border-t border-gray-700 bg-gray-800 flex items-center justify-between">
+        <div className="px-4 py-2 border-t border-gray-200 bg-gray-50 flex items-center justify-between">
           <span className="text-xs text-gray-500">
             Showing {page * pageSize + 1}-
             {Math.min((page + 1) * pageSize, total)} of {total}
@@ -329,7 +329,7 @@ export function AuditLog() {
             <button
               onClick={() => setPage((p) => Math.max(0, p - 1))}
               disabled={page === 0}
-              className="px-3 py-1 text-xs bg-gray-700 border border-gray-600 rounded hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-3 py-1 text-xs bg-white border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Prev
             </button>
@@ -339,7 +339,7 @@ export function AuditLog() {
             <button
               onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
               disabled={page >= totalPages - 1}
-              className="px-3 py-1 text-xs bg-gray-700 border border-gray-600 rounded hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-3 py-1 text-xs bg-white border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Next
             </button>

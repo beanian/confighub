@@ -128,7 +128,7 @@ export function ConfigHistory({
             <div
               key={entry.sha}
               className={clsx(
-                'relative pl-10 pr-4 py-3 hover:bg-gray-50 transition-fast',
+                'relative pl-10 pr-4 py-3 hover:bg-gray-50 transition-all',
                 isSelected && 'bg-blue-50'
               )}
             >
@@ -171,7 +171,7 @@ export function ConfigHistory({
                       onClick={() => handleSelectVersion(entry.sha)}
                       disabled={loadingContent && selectedCommit === entry.sha}
                       className={clsx(
-                        'px-2 py-1 text-xs rounded transition-fast',
+                        'px-2 py-1 text-xs rounded transition-all',
                         isSelected
                           ? 'bg-blue-100 text-blue-700'
                           : 'text-gray-500 hover:bg-gray-100'
@@ -185,7 +185,7 @@ export function ConfigHistory({
                   {!isFirst && onRollback && (
                     <button
                       onClick={() => setShowRollbackModal(entry.sha)}
-                      className="px-2 py-1 text-xs text-amber-600 hover:bg-amber-50 rounded transition-fast"
+                      className="px-2 py-1 text-xs text-amber-600 hover:bg-amber-50 rounded transition-all"
                     >
                       Rollback
                     </button>
@@ -221,7 +221,7 @@ export function ConfigHistory({
                 value={rollbackReason}
                 onChange={(e) => setRollbackReason(e.target.value)}
                 placeholder="Explain why this config needs to be rolled back..."
-                className="w-full px-3 py-2 border border-border rounded-md text-sm"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
                 rows={3}
               />
             </div>
@@ -232,14 +232,14 @@ export function ConfigHistory({
                   setShowRollbackModal(null);
                   setRollbackReason('');
                 }}
-                className="px-4 py-2 border border-border rounded-md hover:bg-gray-50 transition-fast text-sm"
+                className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-all text-sm"
               >
                 Cancel
               </button>
               <button
                 onClick={handleRollback}
                 disabled={!rollbackReason || rollingBack}
-                className="px-4 py-2 bg-amber-600 text-white rounded-md hover:bg-amber-700 transition-fast text-sm font-medium disabled:opacity-50"
+                className="px-4 py-2 bg-amber-600 text-white rounded-md hover:bg-amber-700 transition-all text-sm font-medium disabled:opacity-50"
               >
                 {rollingBack ? 'Rolling back...' : 'Confirm Rollback'}
               </button>

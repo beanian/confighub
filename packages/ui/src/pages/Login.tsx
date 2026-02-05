@@ -31,25 +31,25 @@ export function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-sidebar flex items-center justify-center p-4">
+    <div className="min-h-screen bg-slate-900 flex items-center justify-center p-4">
       <div className="w-full max-w-sm">
         {/* Logo */}
         <div className="text-center mb-8">
           <h1 className="text-3xl font-semibold text-white tracking-tight">
-            Config<span className="text-accent">Hub</span>
+            Config<span className="text-blue-500">Hub</span>
           </h1>
           <p className="text-gray-400 mt-2 text-sm">Configuration Governance Platform</p>
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="bg-surface-raised rounded-lg p-6 shadow-xl">
+        <form onSubmit={handleSubmit} className="bg-white rounded-lg p-6 shadow-xl">
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-3 py-2 border border-border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               required
             />
           </div>
@@ -60,7 +60,7 @@ export function Login() {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-3 py-2 border border-border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               required
             />
           </div>
@@ -74,7 +74,7 @@ export function Login() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-2 px-4 bg-accent hover:bg-accent-hover text-white font-medium rounded-md transition-fast disabled:opacity-50"
+            className="w-full py-2 px-4 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-md transition-all disabled:opacity-50"
           >
             {loading ? 'Signing in...' : 'Sign in'}
           </button>

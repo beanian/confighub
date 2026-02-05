@@ -115,11 +115,11 @@ export function ChangeDetail() {
     <Layout>
       <div className="h-full flex flex-col">
         {/* Header */}
-        <div className="p-4 border-b border-border bg-surface-raised">
+        <div className="p-4 border-b border-gray-200 bg-white">
           <div className="flex items-center justify-between mb-2">
             <button
               onClick={() => navigate('/changes')}
-              className="text-sm text-gray-500 hover:text-gray-700 transition-fast"
+              className="text-sm text-gray-500 hover:text-gray-700 transition-all"
             >
               &larr; Back to Changes
             </button>
@@ -156,12 +156,12 @@ export function ChangeDetail() {
 
         {/* Actions */}
         {config.actions.length > 0 && (
-          <div className="px-4 py-3 border-b border-border bg-gray-50 flex gap-2">
+          <div className="px-4 py-3 border-b border-gray-200 bg-gray-50 flex gap-2">
             {config.actions.includes('submit') && (
               <button
                 onClick={() => handleAction('submit')}
                 disabled={actionLoading}
-                className="px-4 py-2 bg-accent hover:bg-accent-hover text-white text-sm font-medium rounded-md transition-fast disabled:opacity-50"
+                className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium rounded-md transition-all disabled:opacity-50"
               >
                 Submit for Review
               </button>
@@ -170,7 +170,7 @@ export function ChangeDetail() {
               <button
                 onClick={() => handleAction('approve')}
                 disabled={actionLoading}
-                className="px-4 py-2 bg-success hover:bg-green-600 text-white text-sm font-medium rounded-md transition-fast disabled:opacity-50"
+                className="px-4 py-2 bg-green-500 hover:bg-green-600 text-white text-sm font-medium rounded-md transition-all disabled:opacity-50"
               >
                 Approve
               </button>
@@ -179,7 +179,7 @@ export function ChangeDetail() {
               <button
                 onClick={() => setShowRejectModal(true)}
                 disabled={actionLoading}
-                className="px-4 py-2 bg-danger hover:bg-red-600 text-white text-sm font-medium rounded-md transition-fast disabled:opacity-50"
+                className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white text-sm font-medium rounded-md transition-all disabled:opacity-50"
               >
                 Reject
               </button>
@@ -188,7 +188,7 @@ export function ChangeDetail() {
               <button
                 onClick={() => handleAction('merge')}
                 disabled={actionLoading}
-                className="px-4 py-2 bg-accent hover:bg-accent-hover text-white text-sm font-medium rounded-md transition-fast disabled:opacity-50"
+                className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium rounded-md transition-all disabled:opacity-50"
               >
                 Merge Changes
               </button>
@@ -197,7 +197,7 @@ export function ChangeDetail() {
               <button
                 onClick={() => setShowDiscardModal(true)}
                 disabled={actionLoading}
-                className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium rounded-md transition-fast disabled:opacity-50 ml-auto"
+                className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium rounded-md transition-all disabled:opacity-50 ml-auto"
               >
                 Discard
               </button>
@@ -224,19 +224,19 @@ export function ChangeDetail() {
                 value={rejectComment}
                 onChange={(e) => setRejectComment(e.target.value)}
                 placeholder="Explain why this change is being rejected..."
-                className="w-full px-3 py-2 border border-border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent h-32 resize-none"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent h-32 resize-none"
               />
               <div className="flex justify-end gap-2 mt-4">
                 <button
                   onClick={() => setShowRejectModal(false)}
-                  className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 transition-fast"
+                  className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 transition-all"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={() => handleAction('reject')}
                   disabled={!rejectComment.trim() || actionLoading}
-                  className="px-4 py-2 bg-danger hover:bg-red-600 text-white text-sm font-medium rounded-md transition-fast disabled:opacity-50"
+                  className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white text-sm font-medium rounded-md transition-all disabled:opacity-50"
                 >
                   Reject
                 </button>
@@ -256,14 +256,14 @@ export function ChangeDetail() {
               <div className="flex justify-end gap-2">
                 <button
                   onClick={() => setShowDiscardModal(false)}
-                  className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 transition-fast"
+                  className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 transition-all"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={() => handleAction('discard')}
                   disabled={actionLoading}
-                  className="px-4 py-2 bg-danger hover:bg-red-600 text-white text-sm font-medium rounded-md transition-fast disabled:opacity-50"
+                  className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white text-sm font-medium rounded-md transition-all disabled:opacity-50"
                 >
                   {actionLoading ? 'Discarding...' : 'Discard'}
                 </button>

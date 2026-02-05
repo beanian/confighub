@@ -97,7 +97,7 @@ export function Compare() {
     <Layout>
       <div className="h-full flex flex-col">
         {/* Header */}
-        <div className="p-4 border-b border-border bg-surface-raised">
+        <div className="p-4 border-b border-gray-200 bg-white">
           <div className="flex items-center justify-between mb-4">
             <h1 className="text-lg font-semibold text-gray-900">Compare Environments</h1>
           </div>
@@ -110,7 +110,7 @@ export function Compare() {
               <select
                 value={selectedDomain}
                 onChange={(e) => setSelectedDomain(e.target.value)}
-                className="px-3 py-1.5 border border-border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent font-mono"
+                className="px-3 py-1.5 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono"
               >
                 {domains.map((domain) => (
                   <option key={domain} value={domain}>
@@ -126,7 +126,7 @@ export function Compare() {
               <select
                 value={selectedKey}
                 onChange={(e) => setSelectedKey(e.target.value)}
-                className="px-3 py-1.5 border border-border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent font-mono"
+                className="px-3 py-1.5 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono"
               >
                 {keys.map((key) => (
                   <option key={key} value={key}>
@@ -141,7 +141,7 @@ export function Compare() {
               <select
                 value={leftEnv}
                 onChange={(e) => setLeftEnv(e.target.value)}
-                className="px-3 py-1.5 border border-border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
+                className="px-3 py-1.5 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               >
                 {environments.map((env) => (
                   <option key={env.id} value={env.id}>
@@ -152,7 +152,7 @@ export function Compare() {
 
               <button
                 onClick={swapEnvironments}
-                className="px-2 py-1.5 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded transition-fast"
+                className="px-2 py-1.5 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded transition-all"
                 title="Swap environments"
               >
                 ⇄
@@ -161,7 +161,7 @@ export function Compare() {
               <select
                 value={rightEnv}
                 onChange={(e) => setRightEnv(e.target.value)}
-                className="px-3 py-1.5 border border-border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
+                className="px-3 py-1.5 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               >
                 {environments.map((env) => (
                   <option key={env.id} value={env.id}>
@@ -174,7 +174,7 @@ export function Compare() {
         </div>
 
         {/* Status bar */}
-        <div className="px-4 py-2 border-b border-border bg-gray-50 flex items-center justify-between">
+        <div className="px-4 py-2 border-b border-gray-200 bg-gray-50 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
               <span className={clsx('w-2 h-2 rounded-full', getEnvColor(leftEnv))} />

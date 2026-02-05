@@ -85,9 +85,9 @@ function CreateConfigModal({ env, existingDomains, initialDomain, onClose, onCre
                 type="button"
                 onClick={() => setDomainType('existing')}
                 className={clsx(
-                  'px-3 py-1.5 text-sm font-medium rounded-md transition-fast',
+                  'px-3 py-1.5 text-sm font-medium rounded-md transition-all',
                   domainType === 'existing'
-                    ? 'bg-accent text-white'
+                    ? 'bg-blue-500 text-white'
                     : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                 )}
               >
@@ -97,9 +97,9 @@ function CreateConfigModal({ env, existingDomains, initialDomain, onClose, onCre
                 type="button"
                 onClick={() => setDomainType('new')}
                 className={clsx(
-                  'px-3 py-1.5 text-sm font-medium rounded-md transition-fast',
+                  'px-3 py-1.5 text-sm font-medium rounded-md transition-all',
                   domainType === 'new'
-                    ? 'bg-accent text-white'
+                    ? 'bg-blue-500 text-white'
                     : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                 )}
               >
@@ -111,7 +111,7 @@ function CreateConfigModal({ env, existingDomains, initialDomain, onClose, onCre
               <select
                 value={selectedDomain}
                 onChange={(e) => setSelectedDomain(e.target.value)}
-                className="w-full px-3 py-2 border border-border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent font-mono"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono"
               >
                 <option value="">Select a domain...</option>
                 {existingDomains.map((d) => (
@@ -124,7 +124,7 @@ function CreateConfigModal({ env, existingDomains, initialDomain, onClose, onCre
                 value={newDomain}
                 onChange={(e) => setNewDomain(e.target.value.toLowerCase())}
                 placeholder="e.g., my-new-domain"
-                className="w-full px-3 py-2 border border-border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent font-mono"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono"
               />
             )}
           </div>
@@ -137,7 +137,7 @@ function CreateConfigModal({ env, existingDomains, initialDomain, onClose, onCre
               value={keyName}
               onChange={(e) => setKeyName(e.target.value.toLowerCase())}
               placeholder="e.g., my-config"
-              className="w-full px-3 py-2 border border-border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent font-mono"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono"
             />
             <p className="text-xs text-gray-500 mt-1">
               Lowercase letters, numbers, and hyphens only
@@ -150,7 +150,7 @@ function CreateConfigModal({ env, existingDomains, initialDomain, onClose, onCre
             <textarea
               value={content}
               onChange={(e) => setContent(e.target.value)}
-              className="w-full px-3 py-2 border border-border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent font-mono h-32 resize-none"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono h-32 resize-none"
             />
           </div>
 
@@ -164,14 +164,14 @@ function CreateConfigModal({ env, existingDomains, initialDomain, onClose, onCre
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 transition-fast"
+              className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 transition-all"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="px-4 py-2 bg-accent hover:bg-accent-hover text-white text-sm font-medium rounded-md transition-fast disabled:opacity-50"
+              className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium rounded-md transition-all disabled:opacity-50"
             >
               {loading ? 'Creating...' : 'Create Change Request'}
             </button>
@@ -237,14 +237,14 @@ function DeleteModal({ type, name, env, domain, onClose, onCreated }: DeleteModa
         <div className="flex justify-end gap-2">
           <button
             onClick={onClose}
-            className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 transition-fast"
+            className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 transition-all"
           >
             Cancel
           </button>
           <button
             onClick={handleConfirm}
             disabled={loading}
-            className="px-4 py-2 bg-danger hover:bg-red-600 text-white text-sm font-medium rounded-md transition-fast disabled:opacity-50"
+            className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white text-sm font-medium rounded-md transition-all disabled:opacity-50"
           >
             {loading ? 'Creating...' : 'Create Delete Request'}
           </button>
@@ -349,21 +349,21 @@ export function Browse() {
     <Layout>
       <div className="h-full flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-border bg-surface-raised">
+        <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-white">
           <div className="flex items-center gap-4">
             <h1 className="text-lg font-semibold text-gray-900">Browse Configurations</h1>
           </div>
           <div className="flex items-center gap-2">
             <button
               onClick={() => setShowCreateConfig(true)}
-              className="px-4 py-2 bg-accent hover:bg-accent-hover text-white text-sm font-medium rounded-md transition-fast"
+              className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium rounded-md transition-all"
             >
               + New Config
             </button>
             {selectedKey && (
               <button
                 onClick={handleEdit}
-                className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium rounded-md transition-fast"
+                className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium rounded-md transition-all"
               >
                 Edit Config
               </button>
@@ -374,7 +374,7 @@ export function Browse() {
         {/* Three-pane layout */}
         <div className="flex-1 flex overflow-hidden">
           {/* Domains */}
-          <div className="w-48 border-r border-border bg-surface-raised overflow-auto flex flex-col">
+          <div className="w-48 border-r border-gray-200 bg-gray-50 overflow-auto flex flex-col">
             <div className="p-2 text-xs font-medium text-gray-500 uppercase tracking-wider">
               Domains
             </div>
@@ -383,9 +383,9 @@ export function Browse() {
                 <div
                   key={domain}
                   className={clsx(
-                    'group flex items-center justify-between px-3 py-2 text-sm transition-fast',
+                    'group flex items-center justify-between px-3 py-2 text-sm transition-all',
                     selectedDomain === domain
-                      ? 'bg-accent text-white'
+                      ? 'bg-blue-500 text-white'
                       : 'text-gray-700 hover:bg-gray-100'
                   )}
                 >
@@ -401,7 +401,7 @@ export function Browse() {
                       setDeleteTarget({ type: 'domain', name: domain });
                     }}
                     className={clsx(
-                      'w-5 h-5 flex items-center justify-center rounded opacity-0 group-hover:opacity-100 transition-fast',
+                      'w-5 h-5 flex items-center justify-center rounded opacity-0 group-hover:opacity-100 transition-all',
                       selectedDomain === domain
                         ? 'hover:bg-white/20 text-white'
                         : 'hover:bg-gray-200 text-gray-500'
@@ -419,7 +419,7 @@ export function Browse() {
           </div>
 
           {/* Keys */}
-          <div className="w-56 border-r border-border bg-surface-raised overflow-auto flex flex-col">
+          <div className="w-56 border-r border-gray-200 bg-gray-50 overflow-auto flex flex-col">
             <div className="p-2 text-xs font-medium text-gray-500 uppercase tracking-wider">
               Keys
             </div>
@@ -428,9 +428,9 @@ export function Browse() {
                 <div
                   key={key}
                   className={clsx(
-                    'group flex items-center justify-between px-3 py-2 text-sm font-mono transition-fast',
+                    'group flex items-center justify-between px-3 py-2 text-sm font-mono transition-all',
                     selectedKey === key
-                      ? 'bg-accent text-white'
+                      ? 'bg-blue-500 text-white'
                       : 'text-gray-700 hover:bg-gray-100'
                   )}
                 >
@@ -446,7 +446,7 @@ export function Browse() {
                       setDeleteTarget({ type: 'key', name: key });
                     }}
                     className={clsx(
-                      'w-5 h-5 flex items-center justify-center rounded opacity-0 group-hover:opacity-100 transition-fast',
+                      'w-5 h-5 flex items-center justify-center rounded opacity-0 group-hover:opacity-100 transition-all',
                       selectedKey === key
                         ? 'hover:bg-white/20 text-white'
                         : 'hover:bg-gray-200 text-gray-500'
@@ -464,10 +464,10 @@ export function Browse() {
           </div>
 
           {/* Preview */}
-          <div className="flex-1 flex flex-col overflow-hidden">
+          <div className="flex-1 flex flex-col overflow-hidden bg-white">
             {selectedKey ? (
               <>
-                <div className="px-4 py-2 border-b border-border bg-gray-50 flex items-center justify-between">
+                <div className="px-4 py-2 border-b border-gray-200 bg-gray-50 flex items-center justify-between">
                   <div className="text-sm">
                     <span className="text-gray-500">{selectedDomain}/</span>
                     <span className="font-medium text-gray-900">{selectedKey}</span>
@@ -487,9 +487,9 @@ export function Browse() {
                         setHistoryCommit(null);
                       }}
                       className={clsx(
-                        'px-3 py-1 text-xs font-medium rounded transition-fast',
+                        'px-3 py-1 text-xs font-medium rounded transition-all',
                         activeTab === 'preview'
-                          ? 'bg-accent text-white'
+                          ? 'bg-blue-500 text-white'
                           : 'text-gray-600 hover:bg-gray-100'
                       )}
                     >
@@ -498,9 +498,9 @@ export function Browse() {
                     <button
                       onClick={() => setActiveTab('history')}
                       className={clsx(
-                        'px-3 py-1 text-xs font-medium rounded transition-fast',
+                        'px-3 py-1 text-xs font-medium rounded transition-all',
                         activeTab === 'history'
-                          ? 'bg-accent text-white'
+                          ? 'bg-blue-500 text-white'
                           : 'text-gray-600 hover:bg-gray-100'
                       )}
                     >

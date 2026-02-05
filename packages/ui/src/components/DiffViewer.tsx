@@ -65,13 +65,13 @@ export function DiffViewer({
   }, [diff]);
 
   return (
-    <div className="border border-border rounded-lg overflow-hidden">
+    <div className="border border-gray-200 rounded-lg overflow-hidden">
       {/* Headers */}
-      <div className="flex border-b border-border bg-gray-50">
-        <div className="flex-1 px-4 py-2 font-medium text-sm text-gray-700 border-r border-border flex items-center justify-between">
+      <div className="flex border-b border-gray-200 bg-gray-50">
+        <div className="flex-1 px-4 py-2 font-medium text-sm text-gray-700 border-r border-gray-200 flex items-center justify-between">
           <span>{oldLabel}</span>
           {stats.deletions > 0 && (
-            <span className="text-xs bg-diff-remove-strong text-red-700 px-2 py-0.5 rounded font-mono">
+            <span className="text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded font-mono">
               -{stats.deletions}
             </span>
           )}
@@ -79,7 +79,7 @@ export function DiffViewer({
         <div className="flex-1 px-4 py-2 font-medium text-sm text-gray-700 flex items-center justify-between">
           <span>{newLabel}</span>
           {stats.additions > 0 && (
-            <span className="text-xs bg-diff-add-strong text-green-700 px-2 py-0.5 rounded font-mono">
+            <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded font-mono">
               +{stats.additions}
             </span>
           )}
@@ -89,20 +89,20 @@ export function DiffViewer({
       {/* Diff content */}
       <div className="flex font-mono text-sm max-h-[600px] overflow-auto custom-scrollbar">
         {/* Left side */}
-        <div className="flex-1 border-r border-border">
+        <div className="flex-1 border-r border-gray-200">
           {leftLines.map((line, i) => (
             <div
               key={`left-${i}`}
               className={clsx(
                 'flex',
-                line.type === 'removed' && 'bg-diff-remove'
+                line.type === 'removed' && 'bg-red-50'
               )}
             >
               <span
                 className={clsx(
                   'w-12 flex-shrink-0 px-2 py-0.5 text-right text-gray-400 select-none border-r',
                   line.type === 'removed'
-                    ? 'bg-diff-remove-strong border-red-200'
+                    ? 'bg-red-100 border-red-200'
                     : 'border-gray-100'
                 )}
               >
@@ -130,14 +130,14 @@ export function DiffViewer({
               key={`right-${i}`}
               className={clsx(
                 'flex',
-                line.type === 'added' && 'bg-diff-add'
+                line.type === 'added' && 'bg-green-50'
               )}
             >
               <span
                 className={clsx(
                   'w-12 flex-shrink-0 px-2 py-0.5 text-right text-gray-400 select-none border-r',
                   line.type === 'added'
-                    ? 'bg-diff-add-strong border-green-200'
+                    ? 'bg-green-100 border-green-200'
                     : 'border-gray-100'
                 )}
               >

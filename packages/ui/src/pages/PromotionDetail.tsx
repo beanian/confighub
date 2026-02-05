@@ -158,7 +158,7 @@ export function PromotionDetail() {
     <Layout>
       <div className="h-full flex flex-col">
         {/* Header */}
-        <div className="p-4 border-b border-border bg-surface-raised">
+        <div className="p-4 border-b border-gray-200 bg-white">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-3">
               <button
@@ -185,14 +185,14 @@ export function PromotionDetail() {
                   <button
                     onClick={handleReject}
                     disabled={actionLoading}
-                    className="px-4 py-2 border border-red-300 text-red-700 rounded-md hover:bg-red-50 transition-fast text-sm font-medium disabled:opacity-50"
+                    className="px-4 py-2 border border-red-300 text-red-700 rounded-md hover:bg-red-50 transition-all text-sm font-medium disabled:opacity-50"
                   >
                     Reject
                   </button>
                   <button
                     onClick={handleApprove}
                     disabled={actionLoading}
-                    className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-fast text-sm font-medium disabled:opacity-50"
+                    className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-all text-sm font-medium disabled:opacity-50"
                   >
                     Approve
                   </button>
@@ -202,7 +202,7 @@ export function PromotionDetail() {
                 <button
                   onClick={handleExecute}
                   disabled={actionLoading}
-                  className="px-4 py-2 bg-accent text-white rounded-md hover:bg-accent-hover transition-fast text-sm font-medium disabled:opacity-50"
+                  className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-all text-sm font-medium disabled:opacity-50"
                 >
                   Execute Promotion
                 </button>
@@ -211,7 +211,7 @@ export function PromotionDetail() {
                 <button
                   onClick={() => setShowRollbackModal(true)}
                   disabled={actionLoading}
-                  className="px-4 py-2 border border-red-300 text-red-700 rounded-md hover:bg-red-50 transition-fast text-sm font-medium disabled:opacity-50"
+                  className="px-4 py-2 border border-red-300 text-red-700 rounded-md hover:bg-red-50 transition-all text-sm font-medium disabled:opacity-50"
                 >
                   Rollback
                 </button>
@@ -257,7 +257,7 @@ export function PromotionDetail() {
                 value={reviewNotes}
                 onChange={(e) => setReviewNotes(e.target.value)}
                 placeholder="Add review notes (required for rejection)..."
-                className="w-full px-3 py-2 border border-border rounded-md text-sm"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
                 rows={2}
               />
             </div>
@@ -268,15 +268,15 @@ export function PromotionDetail() {
         <div className="flex-1 flex flex-col overflow-hidden">
           {/* File tabs */}
           {preview && preview.files.length > 1 && (
-            <div className="px-4 py-2 border-b border-border bg-gray-50 flex gap-1 overflow-x-auto">
+            <div className="px-4 py-2 border-b border-gray-200 bg-gray-50 flex gap-1 overflow-x-auto">
               {preview.files.map((file, idx) => (
                 <button
                   key={file.file}
                   onClick={() => setSelectedFile(idx)}
                   className={clsx(
-                    'px-3 py-1.5 text-xs font-mono rounded-md transition-fast whitespace-nowrap',
+                    'px-3 py-1.5 text-xs font-mono rounded-md transition-all whitespace-nowrap',
                     selectedFile === idx
-                      ? 'bg-white border border-border shadow-sm'
+                      ? 'bg-white border border-gray-200 shadow-sm'
                       : 'text-gray-600 hover:bg-white'
                   )}
                 >
@@ -333,7 +333,7 @@ export function PromotionDetail() {
                   value={rollbackReason}
                   onChange={(e) => setRollbackReason(e.target.value)}
                   placeholder="Explain why this promotion needs to be rolled back..."
-                  className="w-full px-3 py-2 border border-border rounded-md text-sm"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
                   rows={3}
                 />
               </div>
@@ -341,14 +341,14 @@ export function PromotionDetail() {
               <div className="flex justify-end gap-2">
                 <button
                   onClick={() => setShowRollbackModal(false)}
-                  className="px-4 py-2 border border-border rounded-md hover:bg-gray-50 transition-fast text-sm"
+                  className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-all text-sm"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleRollback}
                   disabled={!rollbackReason || actionLoading}
-                  className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-fast text-sm font-medium disabled:opacity-50"
+                  className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-all text-sm font-medium disabled:opacity-50"
                 >
                   {actionLoading ? 'Rolling back...' : 'Confirm Rollback'}
                 </button>

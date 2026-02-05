@@ -63,25 +63,25 @@ export function Dashboard() {
 
         {/* Stats Grid */}
         <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
-          <div className="bg-surface-raised border border-border rounded-lg p-4">
-            <div className="text-3xl font-semibold text-warning">{pendingReview.length}</div>
+          <div className="bg-white border border-gray-200 rounded-lg p-4">
+            <div className="text-3xl font-semibold text-amber-500">{pendingReview.length}</div>
             <div className="text-sm text-gray-600 mt-1">Changes Pending Review</div>
           </div>
-          <div className="bg-surface-raised border border-border rounded-lg p-4">
-            <div className="text-3xl font-semibold text-success">{approvedChanges.length}</div>
+          <div className="bg-white border border-gray-200 rounded-lg p-4">
+            <div className="text-3xl font-semibold text-green-500">{approvedChanges.length}</div>
             <div className="text-sm text-gray-600 mt-1">Ready to Merge</div>
           </div>
-          <div className="bg-surface-raised border border-border rounded-lg p-4">
+          <div className="bg-white border border-gray-200 rounded-lg p-4">
             <div className="text-3xl font-semibold text-blue-600">{pendingPromotions.length}</div>
             <div className="text-sm text-gray-600 mt-1">Promotions Pending</div>
           </div>
-          <div className="bg-surface-raised border border-border rounded-lg p-4">
+          <div className="bg-white border border-gray-200 rounded-lg p-4">
             <div className="text-3xl font-semibold text-amber-600">{approvedPromotions.length}</div>
             <div className="text-sm text-gray-600 mt-1">Promotions Ready</div>
           </div>
           <Link
             to="/dependencies"
-            className="bg-surface-raised border border-border rounded-lg p-4 hover:border-accent transition-fast"
+            className="bg-white border border-gray-200 rounded-lg p-4 hover:border-blue-400 transition-all"
           >
             <div className="text-3xl font-semibold text-purple-600">{depSummary?.total || 0}</div>
             <div className="text-sm text-gray-600 mt-1">Connected Apps</div>
@@ -105,7 +105,7 @@ export function Dashboard() {
                 <div
                   key={e.id}
                   className={clsx(
-                    'bg-surface-raised border rounded-lg p-4',
+                    'bg-white border rounded-lg p-4',
                     e.id === 'dev' && 'border-blue-200',
                     e.id === 'staging' && 'border-amber-200',
                     e.id === 'prod' && 'border-red-200'
@@ -135,19 +135,19 @@ export function Dashboard() {
         <div className="flex gap-3 mb-8">
           <Link
             to="/browse"
-            className="px-4 py-2 bg-accent hover:bg-accent-hover text-white text-sm font-medium rounded-md transition-fast"
+            className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium rounded-md transition-all"
           >
             Browse Configs
           </Link>
           <Link
             to="/promotions"
-            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-md transition-fast"
+            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-md transition-all"
           >
             Promote to Staging
           </Link>
           <Link
             to="/changes"
-            className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium rounded-md transition-fast"
+            className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium rounded-md transition-all"
           >
             View All Changes
           </Link>
@@ -156,17 +156,17 @@ export function Dashboard() {
         {/* Two-column layout for recent items */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Recent pending reviews */}
-          <div className="bg-surface-raised border border-border rounded-lg">
-            <div className="px-4 py-3 border-b border-border">
+          <div className="bg-white border border-gray-200 rounded-lg">
+            <div className="px-4 py-3 border-b border-gray-200">
               <h2 className="font-medium text-gray-900">Recent Changes</h2>
             </div>
             {!loading && pendingReview.length > 0 ? (
-              <div className="divide-y divide-border">
+              <div className="divide-y divide-gray-200">
                 {pendingReview.slice(0, 5).map((change) => (
                   <Link
                     key={change.id}
                     to={`/changes/${change.id}`}
-                    className="flex items-center justify-between px-4 py-3 hover:bg-gray-50 transition-fast"
+                    className="flex items-center justify-between px-4 py-3 hover:bg-gray-50 transition-all"
                   >
                     <div className="min-w-0">
                       <div className="font-medium text-gray-900 truncate">{change.title}</div>
@@ -174,7 +174,7 @@ export function Dashboard() {
                         {change.domain}/{change.key_name}
                       </div>
                     </div>
-                    <span className="text-xs bg-warning/10 text-warning px-2 py-1 rounded-full font-medium flex-shrink-0 ml-2">
+                    <span className="text-xs bg-amber-100 text-amber-600 px-2 py-1 rounded-full font-medium flex-shrink-0 ml-2">
                       Review
                     </span>
                   </Link>
@@ -190,10 +190,10 @@ export function Dashboard() {
               </div>
             )}
             {changes.length > 0 && (
-              <div className="px-4 py-2 border-t border-border">
+              <div className="px-4 py-2 border-t border-gray-200">
                 <Link
                   to="/changes"
-                  className="text-sm text-accent hover:text-accent-hover font-medium"
+                  className="text-sm text-blue-500 hover:text-blue-600 font-medium"
                 >
                   View all changes
                 </Link>
@@ -202,17 +202,17 @@ export function Dashboard() {
           </div>
 
           {/* Recent promotions */}
-          <div className="bg-surface-raised border border-border rounded-lg">
-            <div className="px-4 py-3 border-b border-border">
+          <div className="bg-white border border-gray-200 rounded-lg">
+            <div className="px-4 py-3 border-b border-gray-200">
               <h2 className="font-medium text-gray-900">Recent Promotions</h2>
             </div>
             {!loading && promotions.length > 0 ? (
-              <div className="divide-y divide-border">
+              <div className="divide-y divide-gray-200">
                 {promotions.slice(0, 5).map((promotion) => (
                   <Link
                     key={promotion.id}
                     to={`/promotions/${promotion.id}`}
-                    className="flex items-center justify-between px-4 py-3 hover:bg-gray-50 transition-fast"
+                    className="flex items-center justify-between px-4 py-3 hover:bg-gray-50 transition-all"
                   >
                     <div className="min-w-0">
                       <div className="flex items-center gap-2">
@@ -248,10 +248,10 @@ export function Dashboard() {
               </div>
             )}
             {promotions.length > 0 && (
-              <div className="px-4 py-2 border-t border-border">
+              <div className="px-4 py-2 border-t border-gray-200">
                 <Link
                   to="/promotions"
-                  className="text-sm text-accent hover:text-accent-hover font-medium"
+                  className="text-sm text-blue-500 hover:text-blue-600 font-medium"
                 >
                   View all promotions
                 </Link>

@@ -186,7 +186,7 @@ export function EditConfig() {
     <Layout>
       <div className="h-full flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-border bg-surface-raised">
+        <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-white">
           <div>
             <div className="flex items-center gap-2 text-sm text-gray-500 mb-1">
               <span>{env}</span>
@@ -207,7 +207,7 @@ export function EditConfig() {
             <button
               onClick={() => setShowDiff(!showDiff)}
               className={clsx(
-                'px-3 py-1.5 text-sm font-medium rounded-md transition-fast',
+                'px-3 py-1.5 text-sm font-medium rounded-md transition-all',
                 showDiff
                   ? 'bg-gray-200 text-gray-900'
                   : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
@@ -217,14 +217,14 @@ export function EditConfig() {
             </button>
             <button
               onClick={() => navigate(-1)}
-              className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 transition-fast"
+              className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 transition-all"
             >
               Cancel
             </button>
             <button
               onClick={handleSubmit}
               disabled={!hasChanges || !!validationError || submitting}
-              className="px-4 py-2 bg-accent hover:bg-accent-hover text-white text-sm font-medium rounded-md transition-fast disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium rounded-md transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {submitting ? 'Creating...' : 'Create Change Request'}
             </button>
@@ -232,7 +232,7 @@ export function EditConfig() {
         </div>
 
         {/* Description */}
-        <div className="px-4 py-3 border-b border-border bg-gray-50">
+        <div className="px-4 py-3 border-b border-gray-200 bg-gray-50">
           <input
             type="text"
             value={description}
@@ -269,7 +269,7 @@ export function EditConfig() {
             {validationError.line && (
               <button
                 onClick={goToError}
-                className="px-2 py-1 text-xs font-medium bg-red-100 hover:bg-red-200 rounded transition-fast"
+                className="px-2 py-1 text-xs font-medium bg-red-100 hover:bg-red-200 rounded transition-all"
               >
                 Go to error
               </button>

@@ -69,7 +69,7 @@ export function Dependencies() {
     <Layout>
       <div className="h-full flex flex-col">
         {/* Header */}
-        <div className="p-4 border-b border-border bg-surface-raised flex items-center justify-between">
+        <div className="p-4 border-b border-gray-200 bg-white flex items-center justify-between">
           <div>
             <h1 className="text-xl font-semibold text-gray-900">Dependencies</h1>
             <p className="text-sm text-gray-500 mt-1">
@@ -82,7 +82,7 @@ export function Dependencies() {
               <button
                 onClick={() => setViewMode('table')}
                 className={clsx(
-                  'px-3 py-1.5 text-sm font-medium rounded-md transition-fast',
+                  'px-3 py-1.5 text-sm font-medium rounded-md transition-all',
                   viewMode === 'table' ? 'bg-white shadow-sm' : 'text-gray-600 hover:text-gray-900'
                 )}
               >
@@ -91,7 +91,7 @@ export function Dependencies() {
               <button
                 onClick={() => setViewMode('graph')}
                 className={clsx(
-                  'px-3 py-1.5 text-sm font-medium rounded-md transition-fast',
+                  'px-3 py-1.5 text-sm font-medium rounded-md transition-all',
                   viewMode === 'graph' ? 'bg-white shadow-sm' : 'text-gray-600 hover:text-gray-900'
                 )}
               >
@@ -102,13 +102,13 @@ export function Dependencies() {
         </div>
 
         {/* Filters */}
-        <div className="px-4 py-3 border-b border-border bg-gray-50 flex items-center gap-4">
+        <div className="px-4 py-3 border-b border-gray-200 bg-gray-50 flex items-center gap-4">
           <div className="flex items-center gap-2">
             <label className="text-sm text-gray-600">Environment:</label>
             <select
               value={envFilter}
               onChange={(e) => setEnvFilter(e.target.value)}
-              className="text-sm border border-border rounded-md px-2 py-1"
+              className="text-sm border border-gray-300 rounded-md px-2 py-1"
             >
               <option value="">All</option>
               <option value="dev">Dev</option>
@@ -121,7 +121,7 @@ export function Dependencies() {
             <select
               value={domainFilter}
               onChange={(e) => setDomainFilter(e.target.value)}
-              className="text-sm border border-border rounded-md px-2 py-1"
+              className="text-sm border border-gray-300 rounded-md px-2 py-1"
             >
               <option value="">All</option>
               {domains.map((d) => (
@@ -146,7 +146,7 @@ export function Dependencies() {
             <div className="h-full overflow-auto">
               <table className="w-full">
                 <thead className="bg-gray-50 sticky top-0">
-                  <tr className="border-b border-border">
+                  <tr className="border-b border-gray-200">
                     <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">
                       Application
                     </th>
@@ -170,7 +170,7 @@ export function Dependencies() {
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-border">
+                <tbody className="divide-y divide-gray-200">
                   {filteredDeps.map((dep) => {
                     const status = getStatus(dep.last_heartbeat);
                     const colors = statusColors[status];
@@ -232,7 +232,7 @@ export function Dependencies() {
                                     {dep.config_keys.map((key) => (
                                       <span
                                         key={key}
-                                        className="bg-white border border-border px-2 py-1 rounded-md font-mono text-xs"
+                                        className="bg-white border border-gray-200 px-2 py-1 rounded-md font-mono text-xs"
                                       >
                                         {dep.domain}/{key}
                                       </span>
@@ -244,7 +244,7 @@ export function Dependencies() {
                                   {dep.contact_email ? (
                                     <a
                                       href={`mailto:${dep.contact_email}`}
-                                      className="text-accent hover:underline"
+                                      className="text-blue-500 hover:underline"
                                     >
                                       {dep.contact_email}
                                     </a>
