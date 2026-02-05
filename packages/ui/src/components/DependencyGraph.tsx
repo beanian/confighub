@@ -167,10 +167,10 @@ export function DependencyGraph({ dependencies }: DependencyGraphProps) {
     const simulation = d3.forceSimulation<GraphNode>(nodes)
       .force('link', d3.forceLink<GraphNode, GraphEdge>(edges)
         .id((d) => d.id)
-        .distance(120))
-      .force('charge', d3.forceManyBody().strength(-300))
+        .distance(150))
+      .force('charge', d3.forceManyBody().strength(-150))
       .force('center', d3.forceCenter(width / 2, height / 2))
-      .force('collision', d3.forceCollide().radius(85));
+      .force('collision', d3.forceCollide().radius(50));
 
     // Draw edges
     const link = g.append('g')
@@ -181,7 +181,7 @@ export function DependencyGraph({ dependencies }: DependencyGraphProps) {
       .attr('stroke-opacity', 0.4)
       .attr('stroke-width', 2);
 
-    // Drag behavior
+    // Drag behavior - nodes stay where you drop them
     const drag = d3.drag<SVGGElement, GraphNode>()
       .on('start', (event, d) => {
         if (!event.active) simulation.alphaTarget(0.3).restart();
@@ -194,9 +194,16 @@ export function DependencyGraph({ dependencies }: DependencyGraphProps) {
       })
       .on('end', (event, d) => {
         if (!event.active) simulation.alphaTarget(0);
-        d.fx = null;
-        d.fy = null;
+        // Keep fx/fy set so node stays where dropped
       });
+
+    // Double-click to release node back to simulation
+    const releaseNode = (_event: any, d: GraphNode) => {
+      d.fx = null;
+      d.fy = null;
+      simulation.alphaTarget(0.3).restart();
+      setTimeout(() => simulation.alphaTarget(0), 500);
+    };
 
     // Draw config nodes (hexagons)
     const configNodes = g.append('g')
@@ -204,7 +211,8 @@ export function DependencyGraph({ dependencies }: DependencyGraphProps) {
       .data(nodes.filter((n) => n.type === 'config'))
       .join('g')
       .attr('cursor', 'grab')
-      .call(drag);
+      .call(drag)
+      .on('dblclick', releaseNode);
 
     // Hexagon path
     const hexRadius = 60;
@@ -247,7 +255,8 @@ export function DependencyGraph({ dependencies }: DependencyGraphProps) {
       .data(nodes.filter((n) => n.type === 'app'))
       .join('g')
       .attr('cursor', 'grab')
-      .call(drag);
+      .call(drag)
+      .on('dblclick', releaseNode);
 
     appNodes.append('rect')
       .attr('width', 140)
