@@ -129,7 +129,49 @@ Promote configurations from lower to higher environments.
 5. System creates tagged commit for traceability
 6. Optional rollback available if issues discovered
 
-#### 3. Drift Detection
+#### 3. Dependency Registry & Impact Analysis
+
+Track which applications consume configurations and see impact warnings before making changes.
+
+**Consumer Status:**
+
+| Status | Definition |
+|--------|------------|
+| `active` | Heartbeat within last 24 hours |
+| `stale` | Heartbeat between 1-7 days ago |
+| `inactive` | No heartbeat for 7+ days |
+
+**How it works:**
+
+1. Applications register themselves via the API, declaring which configs they consume
+2. Applications send periodic heartbeats to indicate they're still running
+3. When viewing or promoting configs, ConfigHub shows which apps will be affected
+4. Production promotions with active consumers show prominent warnings
+5. Users must acknowledge impact before executing production promotions
+
+**Registration example:**
+```bash
+curl -X POST https://confighub/api/dependencies \
+  -H "Content-Type: application/json" \
+  -d '{
+    "app_name": "Motor Pricing Engine",
+    "app_id": "motor-pricing-engine",
+    "environment": "prod",
+    "domain": "pricing",
+    "config_keys": ["motor-rates", "home-rates"],
+    "contact_team": "Pricing Team",
+    "contact_email": "pricing@company.com"
+  }'
+```
+
+**Heartbeat example:**
+```bash
+curl -X POST https://confighub/api/dependencies/motor-pricing-engine/heartbeat \
+  -H "Content-Type: application/json" \
+  -d '{"environment": "prod"}'
+```
+
+#### 4. Drift Detection
 
 Identify configurations that differ across environments.
 
@@ -205,6 +247,8 @@ app.use('/api/changes', changesRoutes);
 app.use('/api/promotions', promotionsRoutes);
 app.use('/api/audit', auditRoutes);
 app.use('/api/drift', driftRoutes);
+app.use('/api/dependencies', dependenciesRoutes);
+app.use('/api/impact', impactRoutes);
 
 // Production: serve static UI
 if (isProduction) {
@@ -290,6 +334,7 @@ class ApiClient {
 | PromotionDetail | `/promotions/:id` | Review and execute promotion |
 | Compare | `/compare` | Side-by-side environment comparison |
 | Drift | `/drift` | Drift analysis dashboard |
+| Dependencies | `/dependencies` | Dependency graph and consumer registry |
 | AuditLog | `/audit` | Searchable audit trail |
 
 ### Data Flow Diagrams
@@ -434,6 +479,77 @@ Execute approved promotion.
 #### POST `/api/promotions/:id/rollback`
 Rollback a promoted change.
 
+### Dependencies & Impact Analysis
+
+#### POST `/api/dependencies`
+Register an application as a consumer of configurations.
+
+**Request:**
+```json
+{
+  "app_name": "Motor Pricing Engine",
+  "app_id": "motor-pricing-engine",
+  "environment": "prod",
+  "domain": "pricing",
+  "config_keys": ["motor-rates", "home-rates"],
+  "contact_team": "Pricing Team",
+  "contact_email": "pricing@company.com",
+  "metadata": { "version": "2.1.0" }
+}
+```
+
+#### GET `/api/dependencies`
+List all registered dependencies.
+
+**Query parameters:**
+- `environment` - Filter by environment
+- `domain` - Filter by domain
+- `app_id` - Filter by application ID
+
+#### GET `/api/dependencies/:appId`
+Get a specific application's registration.
+
+#### POST `/api/dependencies/:appId/heartbeat`
+Update the heartbeat timestamp to indicate the app is still active.
+
+**Request:**
+```json
+{
+  "environment": "prod"
+}
+```
+
+#### DELETE `/api/dependencies/:appId`
+Remove an application registration.
+
+#### GET `/api/impact/:env/:domain/:key`
+Get impact analysis for a specific configuration.
+
+**Response:**
+```json
+{
+  "environment": "prod",
+  "domain": "pricing",
+  "key": "motor-rates",
+  "consumers": [
+    {
+      "app_id": "motor-pricing-engine",
+      "app_name": "Motor Pricing Engine",
+      "status": "active",
+      "last_heartbeat": "2026-02-05T14:30:00Z",
+      "contact_team": "Pricing Team",
+      "contact_email": "pricing@company.com"
+    }
+  ],
+  "consumer_count": 1,
+  "status_counts": {
+    "active": 1,
+    "stale": 0,
+    "inactive": 0
+  }
+}
+```
+
 ### Drift Analysis
 
 #### GET `/api/drift`
@@ -547,6 +663,24 @@ CREATE TABLE audit_log (
   domain TEXT,
   details TEXT,  -- JSON
   commit_sha TEXT
+);
+```
+
+### dependencies
+```sql
+CREATE TABLE dependencies (
+  id TEXT PRIMARY KEY,
+  app_name TEXT NOT NULL,
+  app_id TEXT NOT NULL,
+  environment TEXT NOT NULL,
+  domain TEXT NOT NULL,
+  config_keys TEXT NOT NULL,  -- JSON array of key names
+  contact_email TEXT,
+  contact_team TEXT,
+  last_heartbeat TEXT DEFAULT CURRENT_TIMESTAMP,
+  registered_at TEXT DEFAULT CURRENT_TIMESTAMP,
+  metadata TEXT,  -- JSON for additional app info
+  UNIQUE(app_id, environment)
 );
 ```
 

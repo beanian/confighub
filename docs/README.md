@@ -14,6 +14,8 @@ ConfigHub is a configuration management system that provides:
 - **Change workflows** - Draft, review, approve, merge pipeline
 - **Environment promotions** - Controlled promotion between environments
 - **Drift detection** - Identify config differences across environments
+- **Dependency tracking** - Know which applications consume each config
+- **Impact analysis** - See production impact warnings before promoting
 - **Audit logging** - Complete trail of all changes
 
 ## Why ConfigHub Over Azure App Configuration?
