@@ -37,6 +37,7 @@ export const AuditActions = {
 
   // Config
   CONFIG_ROLLBACK: 'config.rollback',
+  CONFIG_ACCESS_DENIED: 'config.access_denied',
 
   // Auth
   AUTH_LOGIN: 'auth.login',
@@ -217,6 +218,7 @@ export function formatAction(action: string): string {
     'promotion.failed': 'Promotion failed',
     'promotion.rolled_back': 'Rolled back promotion',
     'config.rollback': 'Rolled back config',
+    'config.access_denied': 'Config access denied',
     'auth.login': 'Logged in',
     'auth.logout': 'Logged out',
   };

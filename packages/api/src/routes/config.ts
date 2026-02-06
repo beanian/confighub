@@ -2,8 +2,99 @@ import { Router, Request, Response } from 'express';
 import { getConfig, listKeys, listDomains } from '../services/git';
 import { getConfigHistory, getConfigAtCommit, rollbackConfig } from '../services/promotion';
 import { logAudit, AuditActions } from '../services/audit';
-import { dbRun } from '../db';
+import { dbRun, dbGet } from '../db';
 import yaml from 'js-yaml';
+
+/**
+ * Validates that an app is registered as a consumer for a specific config.
+ * Returns { allowed: true } or { allowed: false, reason: string }.
+ */
+async function validateConsumer(
+  appId: string,
+  env: string,
+  domain: string,
+  key: string
+): Promise<{ allowed: boolean; reason?: string }> {
+  const dep = await dbGet<{ config_keys: string; domain: string }>(
+    'SELECT config_keys, domain FROM dependencies WHERE app_id = ? AND environment = ?',
+    [appId, env]
+  );
+
+  if (!dep) {
+    return {
+      allowed: false,
+      reason: `App '${appId}' is not registered as a consumer in the '${env}' environment. Register via POST /api/dependencies.`,
+    };
+  }
+
+  if (dep.domain !== domain) {
+    return {
+      allowed: false,
+      reason: `App '${appId}' is registered in domain '${dep.domain}', not '${domain}'. Update your registration to include this domain.`,
+    };
+  }
+
+  const keys: string[] = JSON.parse(dep.config_keys || '[]');
+  if (!keys.includes(key)) {
+    return {
+      allowed: false,
+      reason: `App '${appId}' is not registered as a consumer of '${domain}/${key}'. Update your registration to include this config key.`,
+    };
+  }
+
+  return { allowed: true };
+}
+
+/**
+ * Checks config access: authenticated users (JWT) are allowed, apps must be registered consumers.
+ * Returns null if access is allowed, or a Response-ending action if denied.
+ */
+async function enforceConfigAccess(
+  req: Request,
+  res: Response,
+  env: string,
+  domain: string,
+  key: string
+): Promise<boolean> {
+  const userId = (req as any).userId;
+  const appId = req.headers['x-confighub-app-id'] as string | undefined;
+
+  // Authenticated dashboard users can always read configs
+  if (userId) {
+    return true;
+  }
+
+  // Apps must identify themselves
+  if (!appId) {
+    res.status(401).json({
+      error: 'Config access requires authentication or a registered app identity.',
+      hint: 'Provide a JWT token via Authorization header, or identify your app via the X-ConfigHub-App-Id header.',
+    });
+    return false;
+  }
+
+  // Apps must be registered as consumers for this specific config
+  const validation = await validateConsumer(appId, env, domain, key);
+  if (!validation.allowed) {
+    await logAudit(
+      `app:${appId}`,
+      AuditActions.CONFIG_ACCESS_DENIED,
+      'config',
+      `${domain}/${key}`,
+      env,
+      domain,
+      { app_id: appId, reason: validation.reason }
+    );
+    res.status(403).json({
+      error: 'Consumer registration required.',
+      reason: validation.reason,
+      hint: 'Register your app as a consumer via POST /api/dependencies before reading configs.',
+    });
+    return false;
+  }
+
+  return true;
+}
 
 const router = Router();
 
@@ -38,6 +129,10 @@ router.get('/:env/:domain/:key', async (req: Request, res: Response) => {
   if (!['dev', 'staging', 'prod'].includes(env)) {
     return res.status(400).json({ error: 'Invalid environment. Use: dev, staging, prod' });
   }
+
+  // Enforce consumer registration for app access
+  const allowed = await enforceConfigAccess(req, res, env, domain, key);
+  if (!allowed) return;
 
   try {
     const result = await getConfig(env, domain, key);
@@ -112,6 +207,10 @@ router.get('/:env/:domain/:key/history', async (req: Request, res: Response) => 
     return res.status(400).json({ error: 'Invalid environment' });
   }
 
+  // Enforce consumer registration for app access
+  const allowed = await enforceConfigAccess(req, res, env, domain, key);
+  if (!allowed) return;
+
   try {
     const history = await getConfigHistory(env, domain, key);
     res.json({
@@ -133,6 +232,10 @@ router.get('/:env/:domain/:key/at/:commit', async (req: Request, res: Response) 
   if (!['dev', 'staging', 'prod'].includes(env)) {
     return res.status(400).json({ error: 'Invalid environment' });
   }
+
+  // Enforce consumer registration for app access
+  const allowed = await enforceConfigAccess(req, res, env, domain, key);
+  if (!allowed) return;
 
   try {
     const content = await getConfigAtCommit(env, domain, key, commit);
