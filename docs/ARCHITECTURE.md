@@ -5,11 +5,39 @@ ConfigHub is a configuration management platform that provides version-controlle
 ## Table of Contents
 
 - [Overview](#overview)
+  - [What is ConfigHub?](#what-is-confighub)
+  - [Tech Stack](#tech-stack)
 - [Functional Overview](#functional-overview)
+  - [Environments](#environments)
+  - [Configuration Structure](#configuration-structure)
+  - [Core Workflows](#core-workflows)
+    - [Change Request Workflow](#1-change-request-workflow)
+    - [Environment Promotion Workflow](#2-environment-promotion-workflow)
+    - [Dependency Registry & Impact Analysis](#3-dependency-registry--impact-analysis)
+    - [Drift Detection](#4-drift-detection)
+  - [User Roles](#user-roles)
 - [Architecture](#architecture)
+  - [Project Structure](#project-structure)
+  - [Backend Architecture](#backend-architecture)
+  - [Frontend Architecture](#frontend-architecture)
+  - [Data Flow Diagrams](#data-flow-diagrams)
 - [API Reference](#api-reference)
+  - [Authentication](#authentication)
+  - [Configuration](#configuration)
+  - [Change Requests](#change-requests)
+  - [Promotions](#promotions)
+  - [Dependencies & Impact Analysis](#dependencies--impact-analysis)
+  - [Drift Analysis](#drift-analysis)
+  - [Audit Log](#audit-log)
+- [Consumer Registration Guide](#consumer-registration-guide)
+  - [How Consumer Registration Works](#how-consumer-registration-works)
+  - [Registering Your App](#registering-your-app)
+  - [Heartbeat Protocol](#heartbeat-protocol)
+  - [Integration Patterns](#integration-patterns)
 - [Database Schema](#database-schema)
 - [Deployment](#deployment)
+- [Security Considerations](#security-considerations)
+- [Troubleshooting](#troubleshooting)
 
 ---
 
@@ -35,6 +63,8 @@ ConfigHub manages application configurations across multiple environments (devel
 | Database | SQLite (via sql.js) |
 | Storage | Git (via simple-git) |
 | Auth | JWT with bcrypt password hashing |
+
+[Back to top](#table-of-contents)
 
 ---
 
@@ -197,6 +227,8 @@ Identify configurations that differ across environments.
 - Non-admins cannot approve their own requests
 - Only approved changes can be merged
 - Only approved promotions can be executed
+
+[Back to top](#table-of-contents)
 
 ---
 
@@ -367,6 +399,8 @@ class ApiClient {
 5. Update promotion_requests table status
 6. Log to audit_log table
 ```
+
+[Back to top](#table-of-contents)
 
 ---
 
@@ -594,6 +628,194 @@ Query audit entries with filters.
 - `search` - Full-text search
 - `limit` / `offset` - Pagination
 
+[Back to top](#table-of-contents)
+
+---
+
+## Consumer Registration Guide
+
+This section explains how applications register themselves as consumers of ConfigHub configurations. Consumer registration powers the **impact analysis** feature, which warns users when config changes affect production services.
+
+### How Consumer Registration Works
+
+1. **Register** - Your app calls the `/api/dependencies` endpoint to declare which configs it consumes
+2. **Heartbeat** - Your app sends periodic heartbeats to signal it is still running
+3. **Impact Visibility** - When anyone views or promotes configs your app consumes, ConfigHub shows your app as an affected consumer
+4. **Status Tracking** - ConfigHub classifies consumers based on heartbeat recency:
+
+| Status | Heartbeat Age | Meaning |
+|--------|---------------|---------|
+| `active` | < 24 hours | App is running and consuming this config |
+| `stale` | 1-7 days | App may still be running but hasn't checked in recently |
+| `inactive` | > 7 days | App is likely not running or no longer consuming this config |
+
+### Registering Your App
+
+Send a `POST` request to `/api/dependencies` with your app's details. If a registration already exists for the same `app_id` + `environment` combination, it will be updated (upsert behavior).
+
+**Required fields:**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `app_name` | string | Human-readable application name |
+| `app_id` | string | Unique identifier (slug format recommended, e.g. `motor-pricing-engine`) |
+| `environment` | string | Which environment this instance consumes from: `dev`, `staging`, or `prod` |
+| `domain` | string | The config domain this app depends on (e.g. `pricing`, `database`) |
+| `config_keys` | string[] | Array of config key names consumed (e.g. `["motor-rates", "home-rates"]`) |
+
+**Optional fields:**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `contact_team` | string | Team responsible for this app |
+| `contact_email` | string | Contact email for notifications |
+| `metadata` | object | Arbitrary JSON for extra context (e.g. `{"version": "2.1.0", "region": "us-east-1"}`) |
+
+**Example - Register an app:**
+```bash
+curl -X POST https://confighub/api/dependencies \
+  -H "Content-Type: application/json" \
+  -d '{
+    "app_name": "Motor Pricing Engine",
+    "app_id": "motor-pricing-engine",
+    "environment": "prod",
+    "domain": "pricing",
+    "config_keys": ["motor-rates", "home-rates"],
+    "contact_team": "Pricing Team",
+    "contact_email": "pricing@company.com",
+    "metadata": {"version": "2.1.0", "region": "us-east-1"}
+  }'
+```
+
+**Example - Register the same app in multiple environments:**
+```bash
+# Dev instance
+curl -X POST https://confighub/api/dependencies \
+  -H "Content-Type: application/json" \
+  -d '{
+    "app_name": "Motor Pricing Engine",
+    "app_id": "motor-pricing-engine",
+    "environment": "dev",
+    "domain": "pricing",
+    "config_keys": ["motor-rates", "home-rates"],
+    "contact_team": "Pricing Team"
+  }'
+
+# Production instance
+curl -X POST https://confighub/api/dependencies \
+  -H "Content-Type: application/json" \
+  -d '{
+    "app_name": "Motor Pricing Engine",
+    "app_id": "motor-pricing-engine",
+    "environment": "prod",
+    "domain": "pricing",
+    "config_keys": ["motor-rates", "home-rates"],
+    "contact_team": "Pricing Team"
+  }'
+```
+
+**Example - Deregister an app:**
+```bash
+# Remove from all environments
+curl -X DELETE https://confighub/api/dependencies/motor-pricing-engine
+
+# Remove from a specific environment only
+curl -X DELETE "https://confighub/api/dependencies/motor-pricing-engine?environment=dev"
+```
+
+### Heartbeat Protocol
+
+Heartbeats tell ConfigHub your app is still alive and consuming configs. Without heartbeats, your app's status will degrade from `active` → `stale` → `inactive`.
+
+**Send a heartbeat:**
+```bash
+curl -X POST https://confighub/api/dependencies/motor-pricing-engine/heartbeat \
+  -H "Content-Type: application/json" \
+  -d '{"environment": "prod"}'
+```
+
+**Recommended heartbeat interval:** Every 1-6 hours. A heartbeat within the last 24 hours keeps the app marked as `active`.
+
+> **Tip:** Registration calls (`POST /api/dependencies`) also refresh the heartbeat, so if your app re-registers on startup, that counts as a heartbeat too.
+
+### Integration Patterns
+
+#### On Application Startup
+
+Register your app and declare its config dependencies when it boots:
+
+```typescript
+// Example: Node.js app startup
+async function registerWithConfigHub() {
+  await fetch('https://confighub/api/dependencies', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      app_name: 'My Service',
+      app_id: 'my-service',
+      environment: process.env.NODE_ENV === 'production' ? 'prod' : 'dev',
+      domain: 'api',
+      config_keys: ['endpoints', 'cache'],
+      contact_team: 'Platform Team',
+      contact_email: 'platform@company.com',
+      metadata: { version: process.env.APP_VERSION }
+    })
+  });
+}
+```
+
+#### Periodic Heartbeat
+
+Set up a timer to send heartbeats while your app is running:
+
+```typescript
+// Example: Send heartbeat every 4 hours
+setInterval(async () => {
+  await fetch('https://confighub/api/dependencies/my-service/heartbeat', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      environment: process.env.NODE_ENV === 'production' ? 'prod' : 'dev'
+    })
+  });
+}, 4 * 60 * 60 * 1000);
+```
+
+#### CI/CD Pipeline
+
+Register or update dependencies as part of your deployment pipeline:
+
+```yaml
+# Example: GitHub Actions step
+- name: Register with ConfigHub
+  run: |
+    curl -X POST https://confighub/api/dependencies \
+      -H "Content-Type: application/json" \
+      -d '{
+        "app_name": "My Service",
+        "app_id": "my-service",
+        "environment": "${{ env.DEPLOY_ENV }}",
+        "domain": "api",
+        "config_keys": ["endpoints", "cache"],
+        "contact_team": "Platform Team",
+        "metadata": {"version": "${{ github.sha }}", "build": "${{ github.run_id }}"}
+      }'
+```
+
+#### Checking Impact Before Changes
+
+Before promoting or changing configs, query the impact endpoint to see affected consumers:
+
+```bash
+# Who consumes pricing/motor-rates in production?
+curl https://confighub/api/impact/prod/pricing/motor-rates \
+  -H "Authorization: Bearer $TOKEN"
+```
+
+This returns a list of all registered consumers, their status, and contact information.
+
+[Back to top](#table-of-contents)
+
 ---
 
 ## Database Schema
@@ -684,6 +906,8 @@ CREATE TABLE dependencies (
 );
 ```
 
+[Back to top](#table-of-contents)
+
 ---
 
 ## Deployment
@@ -759,6 +983,8 @@ On first startup, a default admin user is created:
 
 **Important:** Change these credentials in production!
 
+[Back to top](#table-of-contents)
+
 ---
 
 ## Security Considerations
@@ -769,6 +995,8 @@ On first startup, a default admin user is created:
 4. **Rate Limiting**: Add rate limiting for auth endpoints
 5. **Audit Logs**: Review audit logs regularly for suspicious activity
 6. **Git Access**: The config-repo should not be directly accessible
+
+[Back to top](#table-of-contents)
 
 ---
 
@@ -791,3 +1019,5 @@ On first startup, a default admin user is created:
 **Database errors:**
 - Verify DATABASE_PATH is writable
 - Check disk space availability
+
+[Back to top](#table-of-contents)

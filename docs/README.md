@@ -4,6 +4,8 @@
 
 - [Architecture Documentation](./ARCHITECTURE.md) - Full technical architecture and API reference
 - [API Examples](./API_EXAMPLES.md) - Common API usage examples
+- [Consumer Registration Guide](./ARCHITECTURE.md#consumer-registration-guide) - How apps register as config consumers
+- [Dependencies API Examples](./API_EXAMPLES.md#dependencies--consumer-registration) - Practical curl examples for consumer registration
 
 ## What is ConfigHub?
 
@@ -131,6 +133,36 @@ pending → approved → promoted → rolled_back (optional)
 | editor | Yes | No | No |
 | approver | Yes | Yes | No |
 | admin | Yes | Yes | Yes |
+
+## Consumer Registration
+
+Applications can register as consumers of ConfigHub configurations. This enables **impact analysis** — when someone changes or promotes a config, ConfigHub shows which apps will be affected.
+
+```bash
+# Register your app as a consumer
+curl -X POST https://your-app/api/dependencies \
+  -H "Content-Type: application/json" \
+  -d '{
+    "app_name": "My Service",
+    "app_id": "my-service",
+    "environment": "prod",
+    "domain": "database",
+    "config_keys": ["connection", "pool"],
+    "contact_team": "Platform Team",
+    "contact_email": "platform@company.com"
+  }'
+
+# Send periodic heartbeats to stay marked as active
+curl -X POST https://your-app/api/dependencies/my-service/heartbeat \
+  -H "Content-Type: application/json" \
+  -d '{"environment": "prod"}'
+
+# Check which apps are affected by a config change
+curl https://your-app/api/impact/prod/database/connection \
+  -H "Authorization: Bearer $TOKEN"
+```
+
+See the [Consumer Registration Guide](./ARCHITECTURE.md#consumer-registration-guide) for integration patterns and full details, or [API Examples](./API_EXAMPLES.md#dependencies--consumer-registration) for more curl examples.
 
 ## API Quick Reference
 
